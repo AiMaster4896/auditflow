@@ -1,0 +1,4203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AuditFlow — Preview</title>
+<style>
+/* assets/css/styles.css */
+
+:root {
+  --navy-900: #0b1220;
+  --navy-800: #131c2e;
+  --navy-700: #1c2740;
+  --blue-600: #2563eb;
+  --blue-500: #3b82f6;
+  --blue-50: #eff6ff;
+  --gray-50: #f7f8fa;
+  --gray-100: #eef0f3;
+  --gray-200: #e2e5ea;
+  --gray-400: #9aa3b2;
+  --gray-600: #5b6472;
+  --gray-900: #1a2130;
+  --red-600: #dc2626;
+  --green-600: #16a34a;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+}
+
+.hidden { display: none !important; }
+
+/* ---------- Auth screen ---------- */
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy-900);
+}
+
+.auth-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px;
+  width: 360px;
+}
+
+.auth-logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy-900);
+  margin-bottom: 24px;
+}
+
+.auth-card form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 14px;
+}
+
+.auth-card input[type="email"],
+.auth-card input[type="password"] {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.password-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400 !important;
+}
+
+.checkbox-row input { width: auto; margin: 0; }
+
+.btn-primary {
+  width: 100%;
+  background: var(--blue-600);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.btn-primary:hover { background: var(--blue-500); }
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--blue-600);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 0 0;
+  display: block;
+}
+
+.form-error {
+  background: #fef2f2;
+  color: var(--red-600);
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.hint {
+  color: var(--gray-400);
+  font-size: 12px;
+  margin-top: 16px;
+}
+
+/* ---------- App shell ---------- */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 232px;
+  background: var(--navy-900);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  padding: 22px 20px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  border-bottom: 1px solid var(--navy-700);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 2px;
+}
+
+.sidebar-link {
+  color: var(--gray-400);
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar-link:hover { background: var(--navy-700); color: #fff; }
+.sidebar-link.active { background: var(--blue-600); color: #fff; }
+
+.main-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  height: 64px;
+  background: #fff;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 24px;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.topbar-name { font-weight: 600; }
+.topbar-role {
+  background: var(--blue-50);
+  color: var(--blue-600);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.app-content {
+  padding: 28px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-header h1 { margin: 0; font-size: 22px; }
+
+.page-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--gray-600);
+}
+
+/* ---------- AI Bot grid ---------- */
+.ai-bot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.ai-bot-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ai-bot-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+}
+
+.ai-bot-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+
+.ai-bot-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.ai-bot-description {
+  font-size: 13px;
+  color: var(--gray-600);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.ai-bot-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+
+.ai-bot-open-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px;
+  border: 1px solid var(--blue-600);
+  color: var(--blue-600);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.ai-bot-open-btn:hover { background: var(--blue-50); }
+
+.ai-bot-add-card {
+  background: transparent;
+  border: 2px dashed var(--gray-200);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  min-height: 180px;
+}
+
+.ai-bot-add-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--blue-500);
+}
+
+.ai-bot-add-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--blue-600);
+  margin-bottom: 10px;
+}
+
+.ai-bot-add-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue-600);
+  margin-bottom: 6px;
+}
+
+.ai-bot-add-hint {
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+/* ---------- Virtual Workspace ---------- */
+.workspace-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.workspace-main { flex: 1; min-width: 0; }
+
+.workspace-chat {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+}
+
+.workspace-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.avatar-customizer {
+  display: flex;
+  gap: 24px;
+  background: var(--gray-50);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.avatar-preview { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+.avatar-options { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 14px; }
+
+.option-label { font-size: 12px; font-weight: 700; color: var(--gray-600); display: block; margin-bottom: 6px; text-transform: capitalize; }
+
+.swatch-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.swatch-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.swatch-btn.selected { border-color: var(--blue-600); }
+
+.choice-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.choice-btn.selected { background: var(--blue-600); color: #fff; border-color: var(--blue-600); }
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-bottom: 12px;
+}
+
+.chat-message { margin-bottom: 12px; }
+
+.chat-sender { font-size: 12px; font-weight: 700; margin-right: 6px; }
+.chat-time { font-size: 11px; color: var(--gray-400); }
+
+.chat-bubble {
+  background: var(--gray-50);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  margin-top: 4px;
+  display: inline-block;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.chat-form { display: flex; gap: 8px; }
+
+.chat-form input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.ai-assistant-bubble {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--blue-600);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+  cursor: pointer;
+  z-index: 900;
+  transition: transform 0.15s ease;
+}
+
+.ai-assistant-bubble:hover { transform: scale(1.06); }
+
+.ai-assistant-popup {
+  position: fixed;
+  bottom: 96px;
+  right: 28px;
+  width: 280px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.2);
+  overflow: hidden;
+  z-index: 900;
+}
+
+.ai-popup-header {
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 14px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.ai-popup-item {
+  display: block;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  text-decoration: none;
+  color: var(--gray-900);
+}
+
+.ai-popup-item:last-child { border-bottom: none; }
+.ai-popup-item strong { display: block; font-size: 13px; margin-bottom: 2px; }
+.ai-popup-item span { display: block; font-size: 12px; color: var(--gray-600); }
+.ai-popup-item:hover { background: var(--gray-50); }
+
+/* ---------- Office room (floor plan) ---------- */
+.office-room {
+  position: relative;
+  width: 860px;
+  max-width: 100%;
+  height: 620px;
+  background: #f2efe9;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.furniture { position: absolute; }
+
+.furniture-tree { position: absolute; width: 44px; height: 58px; }
+.tree-canopy {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #5b8c4f;
+  box-shadow: -9px 8px 0 -8px #4a7540, 9px 10px 0 -9px #6fa860;
+}
+.tree-trunk {
+  position: absolute;
+  bottom: 0;
+  left: 18px;
+  width: 8px;
+  height: 18px;
+  background: #8a6a4a;
+  border-radius: 2px;
+}
+
+.desk {
+  position: absolute;
+  width: 68px;
+  height: 42px;
+  background: #c9a679;
+  border: 1px solid #a9835a;
+  border-radius: 6px;
+  transform: translate(-50%, -20px);
+  box-shadow: var(--shadow);
+}
+
+.desk-empty { opacity: 0.55; }
+
+.desk-monitor {
+  position: absolute;
+  width: 22px;
+  height: 14px;
+  background: #2c3440;
+  border-radius: 2px;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.desk-chair {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #6b7280;
+  border-radius: 4px;
+  left: 50%;
+  bottom: -22px;
+  transform: translateX(-50%);
+}
+
+.room-avatar {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.name-tag {
+  background: #fff;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+  margin-top: 2px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.you-tag { background: var(--blue-600); color: #fff; }
+
+.presence-dot-inline {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gray-400);
+  display: inline-block;
+}
+
+.presence-dot-inline.online { background: var(--green-600); }
+
+.ai-room-avatar { z-index: 6; }
+.ai-room-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--navy-900);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.interact-hint {
+  position: absolute;
+  top: -22px;
+  background: var(--blue-600);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.move-marker {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.5);
+  border: 2px solid var(--blue-600);
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  animation: pulse-marker 0.5s ease;
+}
+
+@keyframes pulse-marker {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
+}
+
+/* ---------- Chat tabs ---------- */
+.chat-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.chat-tab {
+  background: none;
+  border: none;
+  padding: 8px 4px;
+  margin-right: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.chat-tab.active { color: var(--blue-600); border-bottom-color: var(--blue-600); }
+
+.private-room-list { flex: 1; overflow-y: auto; }
+
+.new-dm-row { display: flex; gap: 8px; margin-bottom: 12px; }
+
+.dm-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-100);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.dm-row:hover { background: var(--gray-50); }
+
+#chat-back-row { margin-bottom: 8px; }
+
+.reaction-btn {
+  margin-top: 4px;
+  border: 1px solid var(--gray-200);
+  background: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+  display: block;
+}
+
+.reaction-btn.reacted { background: var(--blue-50); border-color: var(--blue-600); color: var(--blue-600); }
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--navy-900);
+  text-align: left;
+  font: inherit;
+}
+
+.link-btn:hover strong { color: var(--blue-600); text-decoration: underline; }
+
+.wo-remark-cell {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clickable-row { cursor: pointer; }
+.clickable-row:hover { background: var(--blue-50); }
+
+/* ---------- Dashboard work order summary ---------- */
+.wo-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.bar-chart { display: flex; flex-direction: column; gap: 12px; }
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 30px;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-label { font-size: 13px; color: var(--gray-600); }
+
+.bar-track {
+  background: var(--gray-100);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.bar-fill { height: 100%; border-radius: 999px; transition: width 0.3s ease; }
+
+.bar-value { font-size: 13px; font-weight: 700; text-align: right; }
+
+.bar-row-clickable { cursor: pointer; border-radius: 8px; padding: 4px; margin: -4px; }
+.bar-row-clickable:hover { background: var(--blue-50); }
+
+/* ---------- Workspace spotlight & firm assets ---------- */
+.spotlight-board {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 60px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 3;
+}
+
+.spotlight-logo { max-height: 34px; max-width: 60px; object-fit: contain; }
+.spotlight-name { font-size: 14px; font-weight: 700; color: var(--navy-900); }
+
+.asset-preview {
+  width: 120px;
+  height: 80px;
+  border: 1px dashed var(--gray-200);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--gray-50);
+}
+
+.asset-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+.page-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: var(--navy-900);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary:hover { background: var(--gray-50); }
+
+#import-clients-btn, #add-client-btn, #download-template-btn {
+  width: auto;
+}
+
+.row-actions { display: flex; gap: 10px; }
+
+.btn-link-danger { color: var(--red-600); }
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+/* ---------- KPI cards ---------- */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.kpi-card.skeleton {
+  height: 84px;
+  background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 37%, var(--gray-100) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.kpi-value { font-size: 28px; font-weight: 700; }
+.kpi-label { font-size: 13px; color: var(--gray-600); margin-top: 4px; }
+
+/* ---------- Tables ---------- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.data-table th, .data-table td {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.data-table th {
+  background: var(--gray-50);
+  color: var(--gray-600);
+  font-weight: 600;
+}
+
+/* ---------- Misc ---------- */
+.empty-state {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px;
+  text-align: center;
+  color: var(--gray-600);
+}
+
+.ai-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.ai-tool-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.ai-tool-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.ai-tool-frame {
+  width: 100%;
+  height: 480px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+/* ---------- Import tool ---------- */
+.import-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.import-card h3 { margin-top: 0; }
+
+.import-card input[type="file"] {
+  margin: 10px 0;
+}
+
+.alias-select {
+  padding: 6px 8px;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.status-valid { background: #dcfce7; color: #15803d; }
+.status-badge.status-warning { background: #fef9c3; color: #a16207; }
+.status-badge.status-rejected { background: #fee2e2; color: #b91c1c; }
+.status-badge.status-wip { background: #fef3c7; color: #92400e; }
+.status-badge.status-completed { background: #dcfce7; color: #15803d; }
+.status-badge.status-quotation { background: #dbeafe; color: #1d4ed8; }
+
+/* ---------- Client List toolbar ---------- */
+.client-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+  padding: 9px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.filter-select {
+  padding: 9px 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fff;
+  color: var(--gray-900);
+}
+
+.btn-dark {
+  background: var(--navy-900);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-dark:hover { background: var(--navy-700); }
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-200);
+  background: #fff;
+  cursor: pointer;
+}
+
+.icon-btn-edit { color: var(--gray-600); }
+.icon-btn-edit:hover { background: var(--gray-50); }
+
+.icon-btn-delete { color: #fff; background: var(--red-600); border-color: var(--red-600); }
+.icon-btn-delete:hover { background: #b91c1c; }
+
+/* ---------- Add/Edit Client modal ---------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 32, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.modal-title { font-size: 20px; font-weight: 700; margin: 0; }
+.modal-subtitle { font-size: 13px; color: var(--gray-600); margin: 4px 0 0; }
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--gray-600);
+  padding: 0;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.modal-grid label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-600);
+}
+
+.modal-grid label input,
+.modal-grid > div input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 9px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--gray-900);
+}
+
+.modal-grid .full-width { grid-column: 1 / -1; }
+
+.directors-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+
+.preview-banner { background: #fff7ed; color: #9a3412; font-size: 12px; padding: 8px 16px; text-align: center; border-bottom: 1px solid #fdba74; }
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  Preview build — connected to the live AuditFlow Supabase project. Not the file you'll push to GitHub (that's the modular version in the zip).
+</div>
+
+<div id="auth-screen" class="auth-screen"></div>
+
+<div id="app-shell" class="app-shell hidden">
+  <aside class="sidebar">
+    <div class="sidebar-logo" id="app-logo">AuditFlow</div>
+    <nav id="sidebar-nav" class="sidebar-nav"></nav>
+  </aside>
+  <div class="main-column">
+    <header class="topbar"><div id="topbar-user" class="topbar-user"></div></header>
+    <main id="app-content" class="app-content"></main>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const supabase = createClient(
+  "https://qfxwgyeuqkqziemxrfyf.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmeHdneWV1cWtxemllbXhyZnlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NDk4MjMsImV4cCI6MjA5OTMyNTgyM30.4fPsQi8noLKK9BJSTx8t_2ljae3X95Zx8FoTCEtgbWY"
+);
+
+// ===== auth.js =====
+// assets/js/auth.js
+
+/**
+ * In-memory cache of the current session's resolved identity.
+ * { user, profile, organisationId, role, mustChangePassword }
+ */
+let currentIdentity = null;
+
+function getIdentity() {
+  return currentIdentity;
+}
+
+async function getSession() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw error;
+  return data.session;
+}
+
+async function signIn(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    throw mapAuthError(error);
+  }
+  await resolveIdentity();
+  return data;
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+  currentIdentity = null;
+}
+
+async function sendPasswordReset(email) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + "/#/reset-password",
+  });
+  if (error) throw mapAuthError(error);
+}
+
+async function updatePassword(newPassword) {
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) throw mapAuthError(error);
+
+  // Clear the forced-change flag once the password is updated.
+  if (currentIdentity?.profile?.id) {
+    await supabase
+      .from("profiles")
+      .update({ must_change_password: false })
+      .eq("id", currentIdentity.profile.id);
+    currentIdentity.mustChangePassword = false;
+  }
+}
+
+/**
+ * Reads the signed-in user's profile + active organisation membership + role.
+ * This is what drives which sidebar items and routes are visible — never
+ * trust anything the browser claims about role, only what's actually in
+ * organisation_members.
+ */
+async function resolveIdentity() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    currentIdentity = null;
+    return null;
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError) throw profileError;
+
+  const { data: membership, error: memberError } = await supabase
+    .from("organisation_members")
+    .select("organisation_id, role, status")
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .limit(1)
+    .maybeSingle();
+
+  if (memberError) throw memberError;
+
+  currentIdentity = {
+    user,
+    profile,
+    organisationId: membership?.organisation_id ?? null,
+    role: membership?.role ?? null,
+    mustChangePassword: !!profile.must_change_password,
+  };
+
+  return currentIdentity;
+}
+
+function mapAuthError(error) {
+  const msg = (error.message || "").toLowerCase();
+  if (msg.includes("invalid login credentials")) {
+    return new Error("Invalid email or password");
+  }
+  if (msg.includes("email not confirmed")) {
+    return new Error("Please verify your email");
+  }
+  return new Error("Sign in failed. Please try again.");
+}
+
+// Keep identity in sync with auth state changes (token refresh, sign out elsewhere, etc.)
+supabase.auth.onAuthStateChange(async (event) => {
+  if (event === "SIGNED_OUT") {
+    currentIdentity = null;
+  } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+    if (!currentIdentity) {
+      try {
+        await resolveIdentity();
+      } catch (e) {
+        console.error("Failed to resolve identity after auth change", e);
+      }
+    }
+  }
+});
+
+// ===== permissions.js =====
+// assets/js/permissions.js
+
+// Route -> roles allowed. 'staff' and 'firm_admin' are the only two roles.
+const ROUTE_ACCESS = {
+  "/dashboard": ["firm_admin", "staff"],
+  "/clients": ["firm_admin", "staff"],
+  "/work-orders": ["firm_admin", "staff"],
+  "/resources": ["firm_admin", "staff"],
+  "/ai-bot": ["firm_admin", "staff"],
+  "/users": ["firm_admin"],
+  "/settings": ["firm_admin"],
+  "/workspace": ["firm_admin", "staff"],
+  "/change-password": ["firm_admin", "staff"],
+  "/account-security": ["firm_admin", "staff"],
+};
+
+function canAccess(route) {
+  const identity = getIdentity();
+  if (!identity || !identity.role) return false;
+  const allowed = ROUTE_ACCESS[route];
+  if (!allowed) return false;
+  return allowed.includes(identity.role);
+}
+
+function isFirmAdmin() {
+  return getIdentity()?.role === "firm_admin";
+}
+
+const SIDEBAR_ITEMS = [
+  { route: "/dashboard", label: "Dashboard", icon: "layout-dashboard", roles: ["firm_admin", "staff"] },
+  { route: "/clients", label: "Client List", icon: "users", roles: ["firm_admin", "staff"] },
+  { route: "/work-orders", label: "Work Orders", icon: "clipboard-list", roles: ["firm_admin", "staff"] },
+  { route: "/resources", label: "Resources", icon: "folder", roles: ["firm_admin", "staff"] },
+  { route: "/ai-bot", label: "AI Bot", icon: "bot", roles: ["firm_admin", "staff"] },
+  { route: "/users", label: "User Management", icon: "user-cog", roles: ["firm_admin"] },
+  { route: "/settings", label: "Firm Settings", icon: "settings", roles: ["firm_admin"] },
+  { route: "/workspace", label: "Virtual Workspace", icon: "building-2", roles: ["firm_admin", "staff"] },
+];
+
+function visibleSidebarItems() {
+  const identity = getIdentity();
+  if (!identity || !identity.role) return [];
+  return SIDEBAR_ITEMS.filter((item) => item.roles.includes(identity.role));
+}
+
+// ===== router.js =====
+// assets/js/router.js
+// Minimal hash router. Routes are registered as { path: renderFn }.
+// renderFn receives the #app-content element and should render into it.
+
+const routes = new Map();
+let notFoundHandler = null;
+let unauthorizedHandler = null;
+let guard = null; // async (path) => true | false
+
+function registerRoute(path, renderFn) {
+  routes.set(path, renderFn);
+}
+
+function setNotFoundHandler(fn) {
+  notFoundHandler = fn;
+}
+
+function setUnauthorizedHandler(fn) {
+  unauthorizedHandler = fn;
+}
+
+/**
+ * A guard function that runs before every route render. Return false to
+ * block rendering (e.g. not signed in, or not permitted for this role) —
+ * the guard itself is responsible for redirecting/showing the right screen.
+ */
+function setGuard(fn) {
+  guard = fn;
+}
+
+function currentPath() {
+  const hash = window.location.hash || "#/dashboard";
+  return hash.replace(/^#/, "") || "/dashboard";
+}
+
+function navigate(path) {
+  if (window.location.hash !== `#${path}`) {
+    window.location.hash = path;
+  } else {
+    render();
+  }
+}
+
+async function render() {
+  const path = currentPath();
+  const appContent = document.getElementById("app-content");
+  if (!appContent) return;
+
+  if (guard) {
+    const allowed = await guard(path);
+    if (!allowed) return; // guard handles its own redirect/rendering
+  }
+
+  const renderFn = routes.get(path);
+  if (!renderFn) {
+    if (notFoundHandler) notFoundHandler(appContent);
+    return;
+  }
+
+  await renderFn(appContent);
+}
+
+function startRouter() {
+  window.addEventListener("hashchange", render);
+  render();
+}
+
+function getCurrentPath() {
+  return currentPath();
+}
+
+// ===== excel-utils.js =====
+// assets/js/excel-utils.js
+// Shared spreadsheet helpers used by the Client List page: template
+// generation, parsing, and normalization.
+
+function loadSheetJS() {
+  return new Promise((resolve, reject) => {
+    if (window.XLSX) { resolve(); return; }
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Could not load the spreadsheet library. Check your connection and try again."));
+    document.head.appendChild(script);
+  });
+}
+
+function loadFlatpickr() {
+  return new Promise((resolve, reject) => {
+    if (window.flatpickr) { resolve(); return; }
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css";
+    document.head.appendChild(link);
+
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Could not load the calendar picker. Check your connection and try again."));
+    document.head.appendChild(script);
+  });
+}
+
+const PLACEHOLDER_VALUES = new Set(["", "-", "0", "#ref!"]);
+function isPlaceholder(v) {
+  if (v == null) return true;
+  return PLACEHOLDER_VALUES.has(String(v).trim().toLowerCase());
+}
+function cleanText(v) {
+  if (v == null) return "";
+  return String(v).replace(/\s+/g, " ").trim();
+}
+function normalizeCompanyName(v) {
+  let s = cleanText(v);
+  s = s.replace(/^\d+\.\s*/, "");
+  s = s.replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, "-");
+  return s;
+}
+function cleanRegNumber(v) {
+  if (v == null) return "";
+  return String(v).trim().replace(/\.0$/, "");
+}
+function excelDateToISO(value) {
+  if (value == null || value === "") return "";
+  if (value instanceof Date && !isNaN(value.getTime())) return value.toISOString().slice(0, 10);
+  if (typeof value === "number" && window.XLSX?.SSF) {
+    const parsed = window.XLSX.SSF.parse_date_code(value);
+    if (parsed) return `${parsed.y}-${String(parsed.m).padStart(2, "0")}-${String(parsed.d).padStart(2, "0")}`;
+  }
+  const d = new Date(value);
+  if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+  return null;
+}
+function cleanAmount(v) {
+  if (isPlaceholder(v)) return "";
+  const n = Number(String(v).replace(/[^0-9.\-]/g, ""));
+  return isNaN(n) ? "" : String(n);
+}
+function cleanPhone(v) {
+  if (v == null) return "";
+  return String(v).trim();
+}
+
+const TEMPLATE_HEADERS = [
+  "Company Name", "Registration Number", "Financial Year End", "Annum Fee",
+  "Contact Person", "Email", "Phone", "Industry", "Branch", "Company Address",
+  "Director 1", "Director 2", "Director 3", "Director 4", "Director 5",
+];
+
+// Multiple header spellings map to the same field, so a hand-edited workbook
+// (like the one used to design this template) still parses correctly.
+const HEADER_MAP = {
+  "company name": "company_name",
+  "registration number": "registration_number",
+  "company registration number": "registration_number",
+  "financial year end": "fye",
+  "fye": "fye",
+  "annum fee": "audit_fee",
+  "annual fee": "audit_fee",
+  "audit fee": "audit_fee",
+  "contact person": "pic_name",
+  "contact persom": "pic_name",
+  "pic name": "pic_name",
+  "email": "pic_email",
+  "pic email": "pic_email",
+  "phone": "pic_phone",
+  "pic contact number": "pic_phone",
+  "industry": "industry",
+  "branch": "branch",
+  "associate in charge": "branch",
+  "company address": "company_address",
+  "director 1": "director_1", "directors1": "director_1", "director1": "director_1",
+  "director 2": "director_2", "directors2": "director_2", "director2": "director_2",
+  "director 3": "director_3", "directors3": "director_3", "director3": "director_3",
+  "director 4": "director_4", "directors4": "director_4", "director4": "director_4",
+  "director 5": "director_5", "directors5": "director_5", "director5": "director_5",
+};
+
+function findHeaderRow(aoa, maxScan = 6) {
+  let bestRow = -1, bestScore = 0;
+  for (let r = 0; r < Math.min(maxScan, aoa.length); r++) {
+    const row = aoa[r] || [];
+    let score = 0;
+    row.forEach((cell) => { if (HEADER_MAP[cleanText(cell).toLowerCase()]) score++; });
+    if (score > bestScore) { bestScore = score; bestRow = r; }
+  }
+  return bestScore >= 2 ? bestRow : -1;
+}
+
+/** Downloads a blank template workbook with the correct headers for re-upload. */
+async function downloadBlankTemplate() {
+  await loadSheetJS();
+  const ws = window.XLSX.utils.aoa_to_sheet([TEMPLATE_HEADERS]);
+  const wb = window.XLSX.utils.book_new();
+  window.XLSX.utils.book_append_sheet(wb, ws, "Completed");
+  window.XLSX.writeFile(wb, "AuditFlow-Client-Template.xlsx");
+}
+
+/** Exports the current client list (plus primary contact info) to a workbook using the template headers. */
+async function exportClientsWorkbook(clients, contactsByClientId) {
+  await loadSheetJS();
+  const rows = [TEMPLATE_HEADERS];
+  (clients || []).forEach((c) => {
+    const contact = (contactsByClientId && contactsByClientId[c.id]) || {};
+    const directors = c.directors || [];
+    rows.push([
+      c.legal_name ?? "",
+      c.registration_number ?? "",
+      c.financial_year_end ?? "",
+      c.audit_fee ?? "",
+      contact.name ?? "",
+      contact.email ?? "",
+      contact.phone ?? "",
+      c.industry ?? "",
+      c.branch ?? "",
+      c.company_address ?? "",
+      directors[0] ?? "", directors[1] ?? "", directors[2] ?? "", directors[3] ?? "", directors[4] ?? "",
+    ]);
+  });
+  const ws = window.XLSX.utils.aoa_to_sheet(rows);
+  const wb = window.XLSX.utils.book_new();
+  window.XLSX.utils.book_append_sheet(wb, ws, "Completed");
+  window.XLSX.writeFile(wb, "AuditFlow-Clients-Export.xlsx");
+}
+
+/** Parses an uploaded workbook's client sheet into normalized row objects. */
+function parseClientWorkbook(workbook) {
+  const sheetName = workbook.SheetNames.includes("Completed") ? "Completed" : workbook.SheetNames[0];
+  if (!sheetName) return { rows: [], error: "The workbook has no sheets." };
+
+  const sheet = workbook.Sheets[sheetName];
+  const aoa = window.XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true, defval: null });
+  const headerRowIdx = findHeaderRow(aoa);
+  if (headerRowIdx === -1) {
+    return { rows: [], error: "Could not find a recognizable header row. Use the downloaded template's headers." };
+  }
+
+  const colMap = {};
+  (aoa[headerRowIdx] || []).forEach((cell, idx) => {
+    const key = cleanText(cell).toLowerCase();
+    if (HEADER_MAP[key]) colMap[HEADER_MAP[key]] = idx;
+  });
+
+  const rows = [];
+  for (let r = headerRowIdx + 1; r < aoa.length; r++) {
+    const rawRow = aoa[r] || [];
+    if (rawRow.every((c) => c == null || String(c).trim() === "")) continue;
+
+    const get = (field) => (colMap[field] != null ? rawRow[colMap[field]] : null);
+    const companyNameRaw = get("company_name");
+    if (isPlaceholder(companyNameRaw)) continue;
+
+    const directors = ["director_1", "director_2", "director_3", "director_4", "director_5"]
+      .map((f) => (isPlaceholder(get(f)) ? "" : cleanText(get(f))))
+      .filter(Boolean);
+
+    rows.push({
+      source_row: r + 1,
+      company_name: normalizeCompanyName(companyNameRaw),
+      registration_number: cleanRegNumber(get("registration_number")),
+      fye: excelDateToISO(get("fye")) || "",
+      audit_fee: cleanAmount(get("audit_fee")),
+      pic_name: isPlaceholder(get("pic_name")) ? "" : cleanText(get("pic_name")),
+      pic_email: isPlaceholder(get("pic_email")) ? "" : cleanText(get("pic_email")),
+      pic_phone: isPlaceholder(get("pic_phone")) ? "" : cleanPhone(get("pic_phone")),
+      industry: isPlaceholder(get("industry")) ? "" : cleanText(get("industry")),
+      branch: isPlaceholder(get("branch")) ? "" : cleanText(get("branch")),
+      company_address: isPlaceholder(get("company_address")) ? "" : cleanText(get("company_address")),
+      directors,
+    });
+  }
+  return { rows, sheetName };
+}
+
+function validateRow(row, existingNormalizedNames) {
+  const issues = [];
+  let status = "valid";
+
+  if (!row.company_name) {
+    issues.push("Missing company name");
+    return { ...row, status: "rejected", issues };
+  }
+  if (row.fye === null) {
+    issues.push("Unparseable FYE date — left blank");
+    status = "warning";
+  }
+  const normalized = row.company_name.toLowerCase();
+  if (existingNormalizedNames.has(normalized)) {
+    issues.push("Matches an existing client — will keep the existing client's details rather than duplicate");
+    if (status === "valid") status = "warning";
+  }
+  return { ...row, status, issues };
+}
+
+// ===== work-orders.js =====
+// assets/js/work-orders.js
+
+const EDIT_ICON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`;
+const DELETE_ICON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>`;
+
+const ORDER_TYPE_LABELS = {
+  audit: "Audit",
+  tax: "Tax",
+  accounting: "Accounting",
+  change_of_info: "Change of Company Info",
+  adhoc: "Adhoc",
+  invoice_request: "Request for Invoice",
+};
+const STATUS_LABELS = { not_started: "Not Started", in_progress: "In Progress", completed: "Completed" };
+
+function isoToDMY(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-");
+  if (!y || !m || !d) return iso;
+  return `${d}/${m}/${y}`;
+}
+function dmyToISO(text) {
+  if (!text) return null;
+  const m = text.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return undefined;
+  const dd = parseInt(m[1], 10), mm = parseInt(m[2], 10), yyyy = parseInt(m[3], 10);
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return undefined;
+  return `${yyyy}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+}
+
+let allWorkOrdersCache = [];
+let allClientsForFilter = [];
+let allStaffForAssign = [];
+let woFilters = { client: "", type: "", status: "" };
+
+// ---------- main page ----------
+async function renderWorkOrders(el) {
+  const orgId = getIdentity()?.organisationId;
+
+  const [{ data: clients }, { data: members }] = await Promise.all([
+    supabase.from("clients").select("id, legal_name").eq("organisation_id", orgId).order("legal_name"),
+    supabase.from("organisation_members").select("user_id, profiles(display_name, email)").eq("organisation_id", orgId).eq("status", "active"),
+  ]);
+  allClientsForFilter = clients || [];
+  allStaffForAssign = members || [];
+
+  el.innerHTML = `
+    <div class="page-header">
+      <h1>Work Orders</h1>
+      <div class="page-actions">
+        <select id="wo-filter-client" class="filter-select">
+          <option value="">All Clients</option>
+          ${allClientsForFilter.map((c) => `<option value="${c.id}">${c.legal_name}</option>`).join("")}
+        </select>
+        <select id="wo-filter-type" class="filter-select">
+          <option value="">All Types</option>
+          ${Object.entries(ORDER_TYPE_LABELS).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}
+        </select>
+        <select id="wo-filter-status" class="filter-select">
+          <option value="">All Statuses</option>
+          ${Object.entries(STATUS_LABELS).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}
+        </select>
+        ${isFirmAdmin() ? `<button id="add-wo-btn" class="btn-dark">+ Add Work Order</button>` : ""}
+      </div>
+    </div>
+    <div id="wo-table-wrap" class="import-card">Loading...</div>
+  `;
+
+  document.getElementById("wo-filter-client").addEventListener("change", (e) => { woFilters.client = e.target.value; renderFilteredTable(); });
+  document.getElementById("wo-filter-type").addEventListener("change", (e) => { woFilters.type = e.target.value; renderFilteredTable(); });
+  document.getElementById("wo-filter-status").addEventListener("change", (e) => { woFilters.status = e.target.value; renderFilteredTable(); });
+
+  const addBtn = document.getElementById("add-wo-btn");
+  if (addBtn) addBtn.addEventListener("click", () => openWorkOrderModal({ onSaved: loadAndRenderAll }));
+
+  await loadAndRenderAll();
+}
+
+async function loadAndRenderAll() {
+  const orgId = getIdentity()?.organisationId;
+  const { data, error } = await supabase
+    .from("work_orders")
+    .select("id, order_type, financial_year_end, deadline_date, status, description, professional_fee, ope, client_id, assigned_user_id, clients(legal_name), profiles!assigned_user_id(display_name, email)")
+    .eq("organisation_id", orgId)
+    .order("deadline_date", { ascending: true, nullsFirst: false });
+
+  if (error) {
+    const wrap = document.getElementById("wo-table-wrap");
+    if (wrap) wrap.innerHTML = `<div class="empty-state">Could not load work orders.</div>`;
+    return;
+  }
+  allWorkOrdersCache = data || [];
+  renderFilteredTable();
+}
+
+function renderFilteredTable() {
+  const filtered = allWorkOrdersCache.filter((wo) => {
+    if (woFilters.client && wo.client_id !== woFilters.client) return false;
+    if (woFilters.type && wo.order_type !== woFilters.type) return false;
+    if (woFilters.status && wo.status !== woFilters.status) return false;
+    return true;
+  });
+  const wrap = document.getElementById("wo-table-wrap");
+  if (wrap) renderWorkOrdersTable(wrap, filtered, { showClient: true, onChanged: loadAndRenderAll });
+}
+
+// ---------- shared table renderer (used here and from Client Details) ----------
+function renderWorkOrdersTable(container, orders, { showClient = false, onChanged } = {}) {
+  if (!orders.length) {
+    container.innerHTML = `<div class="empty-state"><p>No work orders yet.</p></div>`;
+    return;
+  }
+
+  const selfId = getIdentity()?.user?.id;
+  const admin = isFirmAdmin();
+
+  container.innerHTML = `
+    <table class="data-table">
+      <thead><tr>
+        ${showClient ? "<th>Client</th>" : ""}
+        <th>Type</th><th>Financial Year</th><th>Assigned Staff</th><th>Deadline</th><th>Status</th><th>Remark</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+        ${orders
+          .map((wo) => {
+            const canUpdateStatus = admin || wo.assigned_user_id === selfId;
+            return `<tr>
+              ${showClient ? `<td>${wo.clients?.legal_name || "-"}</td>` : ""}
+              <td>${ORDER_TYPE_LABELS[wo.order_type] || wo.order_type}</td>
+              <td>${isoToDMY(wo.financial_year_end) || "-"}</td>
+              <td>${wo.profiles?.display_name || wo.profiles?.email || "-"}</td>
+              <td>${isoToDMY(wo.deadline_date) || "-"}</td>
+              <td>
+                ${canUpdateStatus
+                  ? `<select class="filter-select wo-status-select" data-wo="${wo.id}">
+                      ${Object.entries(STATUS_LABELS).map(([k, v]) => `<option value="${k}" ${wo.status === k ? "selected" : ""}>${v}</option>`).join("")}
+                    </select>`
+                  : `<span class="status-badge ${wo.status === "completed" ? "status-completed" : wo.status === "in_progress" ? "status-quotation" : "status-wip"}">${STATUS_LABELS[wo.status]}</span>`
+                }
+              </td>
+              <td class="wo-remark-cell" title="${(wo.description || "").replace(/"/g, "&quot;")}">${wo.description || "-"}</td>
+              <td class="row-actions">
+                ${admin ? `<button class="icon-btn icon-btn-edit" data-edit="${wo.id}" title="Edit">${EDIT_ICON}</button>` : ""}
+                ${admin ? `<button class="icon-btn icon-btn-delete" data-delete="${wo.id}" title="Delete">${DELETE_ICON}</button>` : ""}
+              </td>
+            </tr>`;
+          })
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+  container.querySelectorAll(".wo-status-select").forEach((sel) => {
+    sel.addEventListener("change", async () => {
+      const { error } = await supabase.rpc("update_work_order_status", { work_order_uuid: sel.dataset.wo, new_status: sel.value });
+      if (error) { alert("Could not update status: " + error.message); return; }
+      if (onChanged) await onChanged();
+    });
+  });
+
+  container.querySelectorAll("[data-edit]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const wo = orders.find((o) => o.id === btn.dataset.edit);
+      openWorkOrderModal({ clientId: wo.client_id, existing: wo, onSaved: onChanged });
+    });
+  });
+
+  container.querySelectorAll("[data-delete]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Delete this work order? This cannot be undone.")) return;
+      const { error } = await supabase.from("work_orders").delete().eq("id", btn.dataset.delete);
+      if (error) { alert("Could not delete: " + error.message); return; }
+      if (onChanged) await onChanged();
+    });
+  });
+}
+
+// ---------- add/edit modal (shared) ----------
+async function openWorkOrderModal({ clientId, existing, onSaved } = {}) {
+  const isEdit = !!existing;
+  const orgId = getIdentity()?.organisationId;
+
+  // Ensure staff list is available even if this modal is opened before the main page loads it
+  if (!allStaffForAssign.length) {
+    const { data: members } = await supabase.from("organisation_members").select("user_id, profiles(display_name, email)").eq("organisation_id", orgId).eq("status", "active");
+    allStaffForAssign = members || [];
+  }
+  let clientOptionsHtml = "";
+  if (!clientId) {
+    if (!allClientsForFilter.length) {
+      const { data: clients } = await supabase.from("clients").select("id, legal_name").eq("organisation_id", orgId).order("legal_name");
+      allClientsForFilter = clients || [];
+    }
+    clientOptionsHtml = `
+      <label style="display:block;margin-bottom:14px;">Client
+        <select id="wo-client" required style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;">
+          <option value="">Select a client...</option>
+          ${allClientsForFilter.map((c) => `<option value="${c.id}" ${existing?.client_id === c.id ? "selected" : ""}>${c.legal_name}</option>`).join("")}
+        </select>
+      </label>`;
+  }
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
+  backdrop.innerHTML = `
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">${isEdit ? "Edit Work Order" : "Add Work Order"}</h2>
+          <p class="modal-subtitle">${isEdit ? "Update this engagement's details." : "Create a new engagement for this client."}</p>
+        </div>
+        <button type="button" id="modal-close-btn" class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <form id="wo-form">
+        ${clientOptionsHtml}
+        <label style="display:block;margin-bottom:14px;">Type
+          <select id="wo-type" required style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;">
+            ${Object.entries(ORDER_TYPE_LABELS).map(([k, v]) => `<option value="${k}" ${existing?.order_type === k ? "selected" : ""}>${v}</option>`).join("")}
+          </select>
+        </label>
+        <label style="display:block;margin-bottom:14px;">Financial Year
+          <input type="text" id="wo-fye" placeholder="31/12/2025" autocomplete="off" value="${isoToDMY(existing?.financial_year_end)}" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;" />
+        </label>
+        <div id="wo-staff-deadline-fields">
+          <label style="display:block;margin-bottom:14px;">Staff Assigned
+            <select id="wo-assigned" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;">
+              <option value="">Unassigned</option>
+              ${allStaffForAssign.map((m) => `<option value="${m.user_id}" ${existing?.assigned_user_id === m.user_id ? "selected" : ""}>${m.profiles?.display_name || m.profiles?.email}</option>`).join("")}
+            </select>
+          </label>
+          <label style="display:block;margin-bottom:14px;">Deadline
+            <input type="text" id="wo-deadline" placeholder="31/12/2025" autocomplete="off" value="${isoToDMY(existing?.deadline_date)}" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;" />
+          </label>
+        </div>
+        <div id="wo-invoice-fields">
+          <label style="display:block;margin-bottom:14px;">Professional Fee ($)
+            <input type="number" step="0.01" id="wo-professional-fee" value="${existing?.professional_fee ?? ""}" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;" />
+          </label>
+          <label style="display:block;margin-bottom:14px;">OPE ($)
+            <input type="number" step="0.01" id="wo-ope" value="${existing?.ope ?? ""}" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;" />
+          </label>
+        </div>
+        <label style="display:block;margin-bottom:14px;">Status
+          <select id="wo-status" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;">
+            ${Object.entries(STATUS_LABELS).map(([k, v]) => `<option value="${k}" ${(existing?.status || "not_started") === k ? "selected" : ""}>${v}</option>`).join("")}
+          </select>
+        </label>
+        <label style="display:block;margin-bottom:4px;">Description (optional)
+          <textarea id="wo-description" rows="3" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;font-family:inherit;">${existing?.description ?? ""}</textarea>
+        </label>
+        <p id="wo-error" class="form-error hidden"></p>
+        <div class="modal-actions">
+          <button type="button" id="wo-cancel" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-dark">${isEdit ? "Save Changes" : "Add Work Order"}</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+
+  try {
+    await loadFlatpickr();
+    window.flatpickr("#wo-fye", { dateFormat: "d/m/Y", allowInput: true });
+    window.flatpickr("#wo-deadline", { dateFormat: "d/m/Y", allowInput: true });
+  } catch (err) {
+    console.warn(err.message);
+  }
+
+  function updateFieldsForType() {
+    const isInvoice = document.getElementById("wo-type").value === "invoice_request";
+    document.getElementById("wo-staff-deadline-fields").classList.toggle("hidden", isInvoice);
+    document.getElementById("wo-invoice-fields").classList.toggle("hidden", !isInvoice);
+  }
+  document.getElementById("wo-type").addEventListener("change", updateFieldsForType);
+  updateFieldsForType();
+
+  const close = () => backdrop.remove();
+  document.getElementById("modal-close-btn").addEventListener("click", close);
+  document.getElementById("wo-cancel").addEventListener("click", close);
+  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+
+  document.getElementById("wo-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorEl = document.getElementById("wo-error");
+    const identity = getIdentity();
+
+    const finalClientId = clientId || document.getElementById("wo-client").value;
+    if (!finalClientId) {
+      errorEl.textContent = "Please select a client.";
+      errorEl.classList.remove("hidden");
+      return;
+    }
+
+    const fyeText = document.getElementById("wo-fye").value.trim();
+    const fyeISO = fyeText ? dmyToISO(fyeText) : null;
+    if (fyeText && fyeISO === undefined) {
+      errorEl.textContent = `Could not understand the Financial Year date "${fyeText}". Use DD/MM/YYYY.`;
+      errorEl.classList.remove("hidden");
+      return;
+    }
+    const isInvoice = document.getElementById("wo-type").value === "invoice_request";
+
+    const deadlineText = isInvoice ? "" : document.getElementById("wo-deadline").value.trim();
+    const deadlineISO = deadlineText ? dmyToISO(deadlineText) : null;
+    if (deadlineText && deadlineISO === undefined) {
+      errorEl.textContent = `Could not understand the Deadline date "${deadlineText}". Use DD/MM/YYYY.`;
+      errorEl.classList.remove("hidden");
+      return;
+    }
+
+    const payload = {
+      organisation_id: orgId,
+      client_id: finalClientId,
+      order_type: document.getElementById("wo-type").value,
+      financial_year_end: fyeISO || null,
+      assigned_user_id: isInvoice ? null : (document.getElementById("wo-assigned").value || null),
+      deadline_date: isInvoice ? null : (deadlineISO || null),
+      professional_fee: isInvoice ? (document.getElementById("wo-professional-fee").value || null) : null,
+      ope: isInvoice ? (document.getElementById("wo-ope").value || null) : null,
+      status: document.getElementById("wo-status").value,
+      description: document.getElementById("wo-description").value.trim() || null,
+    };
+
+    let result;
+    if (isEdit) {
+      result = await supabase.from("work_orders").update(payload).eq("id", existing.id);
+    } else {
+      payload.created_by = identity.user.id;
+      result = await supabase.from("work_orders").insert(payload);
+    }
+
+    if (result.error) {
+      errorEl.textContent = "Could not save: " + result.error.message;
+      errorEl.classList.remove("hidden");
+      return;
+    }
+
+    close();
+    if (onSaved) await onSaved();
+  });
+}
+
+// ===== dashboard.js =====
+// assets/js/dashboard.js
+
+const STATUS_COLORS = { not_started: "#9aa3b2", in_progress: "#f59e0b", completed: "#16a34a" };
+const TYPE_COLORS = { audit: "#2563eb", tax: "#059669", accounting: "#7c3aed", change_of_info: "#ea580c", adhoc: "#ca8a04", invoice_request: "#db2777" };
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+let dashOrgMembersCache = [];
+let dashWorkOrdersCache = [];
+let selectedStaffId = "";
+
+async function renderDashboard(el) {
+  el.innerHTML = `
+    <div class="page-header"><h1>Dashboard</h1></div>
+    <div class="import-card">
+      <label style="font-size:13px;font-weight:600;color:var(--gray-600);display:flex;align-items:center;gap:8px;">
+        Filter by Staff:
+        <select id="dash-staff-filter" class="filter-select">
+          <option value="">All Staff</option>
+        </select>
+      </label>
+    </div>
+    <div class="kpi-grid" id="kpi-grid">
+      <div class="kpi-card skeleton"></div>
+      <div class="kpi-card skeleton"></div>
+      <div class="kpi-card skeleton"></div>
+      <div class="kpi-card skeleton"></div>
+    </div>
+    <div class="wo-summary-grid" id="wo-summary-grid"></div>
+    <div class="import-card">
+      <h3 style="margin-top:0;">Work Orders by Staff</h3>
+      <p class="hint">Click a staff member to see their work orders below.</p>
+      <div id="wo-by-staff-table">Loading...</div>
+    </div>
+    <div class="import-card">
+      <h3 style="margin-top:0;">Outstanding Work Orders by Month</h3>
+      <p class="hint">Click a bar to see which work orders fall in that month.</p>
+      <div id="wo-by-month-chart"></div>
+    </div>
+    <div class="import-card hidden" id="wo-details-card">
+      <h3 id="wo-details-title" style="margin-top:0;">Details</h3>
+      <div id="wo-details-table"></div>
+    </div>
+  `;
+
+  const identity = getIdentity();
+  const orgId = identity?.organisationId;
+  if (!orgId) return;
+
+  const [{ count: openCount }, { count: overdueCount }, { count: completedCount }, { data: members }, { data: allWO }] =
+    await Promise.all([
+      supabase.from("client_deadlines").select("id", { count: "exact", head: true }).eq("organisation_id", orgId).neq("status", "completed"),
+      supabase.from("client_deadlines").select("id", { count: "exact", head: true }).eq("organisation_id", orgId).eq("status", "overdue"),
+      supabase.from("client_deadlines").select("id", { count: "exact", head: true }).eq("organisation_id", orgId).eq("status", "completed"),
+      supabase.from("organisation_members").select("user_id, profiles(display_name, email)").eq("organisation_id", orgId).eq("status", "active"),
+      supabase
+        .from("work_orders")
+        .select("id, order_type, financial_year_end, deadline_date, status, description, professional_fee, ope, client_id, assigned_user_id, clients(legal_name), profiles!assigned_user_id(display_name, email)")
+        .eq("organisation_id", orgId),
+    ]);
+
+  dashOrgMembersCache = members || [];
+  dashWorkOrdersCache = allWO || [];
+
+  const staffSelect = document.getElementById("dash-staff-filter");
+  staffSelect.innerHTML = `<option value="">All Staff</option>${dashOrgMembersCache.map((m) => `<option value="${m.user_id}">${m.profiles?.display_name || m.profiles?.email}</option>`).join("")}`;
+  staffSelect.addEventListener("change", (e) => {
+    selectedStaffId = e.target.value;
+    renderKpis(openCount, overdueCount, completedCount);
+    renderStatusTypeCharts();
+    renderMonthChart();
+    document.getElementById("wo-details-card").classList.add("hidden");
+  });
+
+  renderKpis(openCount, overdueCount, completedCount);
+  renderStatusTypeCharts();
+  renderStaffSummary();
+  renderMonthChart();
+}
+
+function filteredOrders() {
+  if (!selectedStaffId) return dashWorkOrdersCache;
+  return dashWorkOrdersCache.filter((wo) => wo.assigned_user_id === selectedStaffId);
+}
+
+function renderKpis(openCount, overdueCount, completedCount) {
+  const openWO = filteredOrders().filter((wo) => wo.status !== "completed").length;
+  document.getElementById("kpi-grid").innerHTML = `
+    ${kpiCard("Total Open Deadlines", openCount ?? 0)}
+    ${kpiCard("Overdue", overdueCount ?? 0)}
+    ${kpiCard("Completed", completedCount ?? 0)}
+    ${kpiCard("Open Work Orders", openWO)}
+  `;
+}
+
+function kpiCard(label, value) {
+  return `<div class="kpi-card"><div class="kpi-value">${value}</div><div class="kpi-label">${label}</div></div>`;
+}
+
+function renderStatusTypeCharts() {
+  const statusCounts = { not_started: 0, in_progress: 0, completed: 0 };
+  const typeCounts = { audit: 0, tax: 0, accounting: 0, change_of_info: 0, adhoc: 0, invoice_request: 0 };
+  filteredOrders().forEach((wo) => {
+    if (wo.status in statusCounts) statusCounts[wo.status]++;
+    if (wo.order_type in typeCounts) typeCounts[wo.order_type]++;
+  });
+
+  document.getElementById("wo-summary-grid").innerHTML = `
+    ${barChartCard("Work Orders by Status", statusCounts, STATUS_LABELS, STATUS_COLORS)}
+    ${barChartCard("Work Orders by Type", typeCounts, ORDER_TYPE_LABELS, TYPE_COLORS)}
+  `;
+}
+
+function barChartCard(title, dataObj, labelMap, colorMap, clickable) {
+  const entries = Object.entries(dataObj);
+  const max = Math.max(1, ...entries.map(([, v]) => v));
+  return `
+    <div class="import-card">
+      <h3 style="margin-top:0;">${title}</h3>
+      <div class="bar-chart">
+        ${entries
+          .map(
+            ([key, val]) => `
+          <div class="bar-row ${clickable ? "bar-row-clickable" : ""}" ${clickable ? `data-bar-key="${key}"` : ""}>
+            <span class="bar-label">${labelMap[key] || key}</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${(val / max) * 100}%;background:${colorMap[key] || "var(--blue-600)"};"></div></div>
+            <span class="bar-value">${val}</span>
+          </div>`
+          )
+          .join("")}
+      </div>
+    </div>`;
+}
+
+function renderStaffSummary() {
+  const wrap = document.getElementById("wo-by-staff-table");
+  const rows = dashOrgMembersCache.map((m) => {
+    const mine = dashWorkOrdersCache.filter((wo) => wo.assigned_user_id === m.user_id);
+    const outstanding = mine.filter((wo) => wo.status !== "completed").length;
+    return { userId: m.user_id, name: m.profiles?.display_name || m.profiles?.email, total: mine.length, outstanding, completed: mine.length - outstanding };
+  });
+
+  if (!rows.length) {
+    wrap.innerHTML = `<div class="empty-state">No staff yet.</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <table class="data-table">
+      <thead><tr><th>Staff</th><th>Total Work Orders</th><th>Outstanding</th><th>Completed</th></tr></thead>
+      <tbody>
+        ${rows
+          .map(
+            (r) => `<tr class="clickable-row" data-staff-row="${r.userId}">
+              <td><strong>${r.name}</strong></td>
+              <td>${r.total}</td>
+              <td>${r.outstanding}</td>
+              <td>${r.completed}</td>
+            </tr>`
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+  wrap.querySelectorAll("[data-staff-row]").forEach((tr) => {
+    tr.addEventListener("click", () => {
+      const staff = rows.find((r) => r.userId === tr.dataset.staffRow);
+      const orders = dashWorkOrdersCache.filter((wo) => wo.assigned_user_id === tr.dataset.staffRow);
+      showDetails(`Work Orders — ${staff.name}`, orders);
+    });
+  });
+}
+
+function renderMonthChart() {
+  const wrap = document.getElementById("wo-by-month-chart");
+  const outstanding = filteredOrders().filter((wo) => wo.status !== "completed" && wo.deadline_date);
+
+  const byMonth = {};
+  outstanding.forEach((wo) => {
+    const d = new Date(wo.deadline_date + "T00:00:00");
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    byMonth[key] = byMonth[key] || { label: `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`, count: 0 };
+    byMonth[key].count++;
+  });
+
+  const sortedKeys = Object.keys(byMonth).sort();
+  if (!sortedKeys.length) {
+    wrap.innerHTML = `<div class="empty-state">No outstanding work orders with a deadline.</div>`;
+    return;
+  }
+  const max = Math.max(1, ...sortedKeys.map((k) => byMonth[k].count));
+
+  wrap.innerHTML = `
+    <div class="bar-chart">
+      ${sortedKeys
+        .map(
+          (k) => `
+        <div class="bar-row bar-row-clickable" data-month-key="${k}">
+          <span class="bar-label">${byMonth[k].label}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(byMonth[k].count / max) * 100}%;background:var(--blue-600);"></div></div>
+          <span class="bar-value">${byMonth[k].count}</span>
+        </div>`
+        )
+        .join("")}
+    </div>
+  `;
+
+  wrap.querySelectorAll("[data-month-key]").forEach((row) => {
+    row.addEventListener("click", () => {
+      const key = row.dataset.monthKey;
+      const orders = outstanding.filter((wo) => {
+        const d = new Date(wo.deadline_date + "T00:00:00");
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}` === key;
+      });
+      showDetails(`Outstanding Work Orders — ${byMonth[key].label}`, orders);
+    });
+  });
+}
+
+function showDetails(title, orders) {
+  const card = document.getElementById("wo-details-card");
+  document.getElementById("wo-details-title").textContent = title;
+  card.classList.remove("hidden");
+  renderWorkOrdersTable(document.getElementById("wo-details-table"), orders, { showClient: true });
+  card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// ===== clients.js =====
+// assets/js/clients.js
+
+
+// FYE is stored as ISO (yyyy-mm-dd) in the database but always shown/typed as DD/MM/YYYY.
+
+let allClients = [];
+let activeFilters = { search: "", status: "", branch: "", fye: "" };
+
+async function renderClients(el) {
+  el.innerHTML = `
+    <div class="page-header"><h1>Client List</h1></div>
+    <div class="import-card">
+      <div class="client-toolbar">
+        <input type="text" id="client-search" class="search-input" placeholder="Search clients..." />
+        <div class="page-actions">
+          <select id="filter-status" class="filter-select">
+            <option value="">All Statuses</option>
+            <option value="WIP">WIP</option>
+            <option value="Completed">Completed</option>
+            <option value="Quotation">Quotation</option>
+          </select>
+          <select id="filter-branch" class="filter-select">
+            <option value="">All Branches</option>
+          </select>
+          <select id="filter-fye" class="filter-select">
+            <option value="">All Year Ends</option>
+          </select>
+          <button id="download-template-btn" class="btn-secondary">Download Template</button>
+          <button id="export-clients-btn" class="btn-secondary">Export</button>
+          <button id="import-clients-btn" class="btn-secondary">Import</button>
+          <button id="add-client-btn" class="btn-dark">+ Add Client</button>
+          <input type="file" id="import-file-input" accept=".xlsx,.xls" class="hidden" />
+        </div>
+      </div>
+      <div id="clients-table-wrap">Loading...</div>
+    </div>
+    <div id="import-section"></div>
+  `;
+
+  document.getElementById("download-template-btn").addEventListener("click", async (e) => {
+    e.target.disabled = true;
+    e.target.textContent = "Preparing...";
+    try {
+      await downloadBlankTemplate();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      e.target.disabled = false;
+      e.target.textContent = "Download Template";
+    }
+  });
+
+  document.getElementById("export-clients-btn").addEventListener("click", async (e) => {
+    e.target.disabled = true;
+    e.target.textContent = "Preparing...";
+    try {
+      const contactsByClientId = await fetchContactsMap(allClients.map((c) => c.id));
+      await exportClientsWorkbook(allClients, contactsByClientId);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      e.target.disabled = false;
+      e.target.textContent = "Export";
+    }
+  });
+
+  document.getElementById("add-client-btn").addEventListener("click", () => openClientModal(null));
+
+  const fileInput = document.getElementById("import-file-input");
+  document.getElementById("import-clients-btn").addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    await handleImportFile(file);
+    fileInput.value = "";
+  });
+
+  document.getElementById("client-search").addEventListener("input", (e) => {
+    activeFilters.search = e.target.value;
+    renderTableRows(applyFilters());
+  });
+  document.getElementById("filter-status").addEventListener("change", (e) => {
+    activeFilters.status = e.target.value;
+    renderTableRows(applyFilters());
+  });
+  document.getElementById("filter-branch").addEventListener("change", (e) => {
+    activeFilters.branch = e.target.value;
+    renderTableRows(applyFilters());
+  });
+  document.getElementById("filter-fye").addEventListener("change", (e) => {
+    activeFilters.fye = e.target.value;
+    renderTableRows(applyFilters());
+  });
+
+  await loadAndRenderTable();
+}
+
+async function fetchContactsMap(clientIds) {
+  if (!clientIds.length) return {};
+  const { data } = await supabase
+    .from("client_contacts")
+    .select("client_id, name, email, phone")
+    .in("client_id", clientIds)
+    .eq("is_primary", true);
+  const map = {};
+  (data || []).forEach((c) => { map[c.client_id] = c; });
+  return map;
+}
+
+function applyFilters() {
+  const q = (activeFilters.search || "").trim().toLowerCase();
+  return allClients.filter((c) => {
+    if (q && !c.legal_name.toLowerCase().includes(q) && !(c.branch || "").toLowerCase().includes(q)) return false;
+    if (activeFilters.status && c.workflow_status !== activeFilters.status) return false;
+    if (activeFilters.branch && c.branch !== activeFilters.branch) return false;
+    if (activeFilters.fye && c.financial_year_end !== activeFilters.fye) return false;
+    return true;
+  });
+}
+
+function populateBranchFilter() {
+  const select = document.getElementById("filter-branch");
+  if (!select) return;
+  const branches = [...new Set(allClients.map((c) => c.branch).filter(Boolean))].sort();
+  const current = select.value;
+  select.innerHTML = `<option value="">All Branches</option>${branches.map((b) => `<option value="${b}">${b}</option>`).join("")}`;
+  select.value = branches.includes(current) ? current : "";
+}
+
+function populateFyeFilter() {
+  const select = document.getElementById("filter-fye");
+  if (!select) return;
+  const dates = [...new Set(allClients.map((c) => c.financial_year_end).filter(Boolean))].sort();
+  const current = select.value;
+  select.innerHTML = `<option value="">All Year Ends</option>${dates.map((d) => `<option value="${d}">${isoToDMY(d)}</option>`).join("")}`;
+  select.value = dates.includes(current) ? current : "";
+}
+
+function resetFilters() {
+  activeFilters = { search: "", status: "", branch: "", fye: "" };
+  const searchEl = document.getElementById("client-search");
+  const statusEl = document.getElementById("filter-status");
+  const branchEl = document.getElementById("filter-branch");
+  const fyeEl = document.getElementById("filter-fye");
+  if (searchEl) searchEl.value = "";
+  if (statusEl) statusEl.value = "";
+  if (branchEl) branchEl.value = "";
+  if (fyeEl) fyeEl.value = "";
+}
+
+async function loadAndRenderTable() {
+  const orgId = getIdentity()?.organisationId;
+  const [{ data, error }, { data: openWOs }] = await Promise.all([
+    supabase
+      .from("clients")
+      .select("id, legal_name, registration_number, financial_year_end, audit_fee, branch, invoice_to_date, workflow_status, industry, company_address, directors")
+      .eq("organisation_id", orgId)
+      .order("legal_name"),
+    supabase.from("work_orders").select("client_id").eq("organisation_id", orgId).neq("status", "completed"),
+  ]);
+
+  if (error) {
+    document.getElementById("clients-table-wrap").innerHTML = `<div class="empty-state">Could not load clients.</div>`;
+    return;
+  }
+
+  const outstandingByClient = {};
+  (openWOs || []).forEach((wo) => { outstandingByClient[wo.client_id] = (outstandingByClient[wo.client_id] || 0) + 1; });
+
+  allClients = (data || []).map((c) => ({ ...c, outstanding_work_orders: outstandingByClient[c.id] || 0 }));
+  populateBranchFilter();
+  populateFyeFilter();
+  renderTableRows(applyFilters());
+}
+
+function money(v) {
+  return v != null ? `$${Number(v).toLocaleString()}` : "-";
+}
+
+function statusBadgeClass(status) {
+  if (status === "Completed") return "status-completed";
+  if (status === "Quotation") return "status-quotation";
+  return "status-wip";
+}
+
+function renderTableRows(rows) {
+  const wrap = document.getElementById("clients-table-wrap");
+  if (!wrap) return;
+
+  if (!rows.length) {
+    wrap.innerHTML = `<div class="empty-state"><p>No clients match.</p><p class="hint">Add one manually, export a template to fill in, or import a filled one back.</p></div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <table class="data-table">
+      <thead><tr>
+        <th>Company Name</th><th>Financial Year End</th><th>Annual Fee</th>
+        <th>Invoice to Date</th><th>Branch</th>
+        <th>Outstanding Work Orders</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+        ${rows
+          .map(
+            (c) => `<tr class="clickable-row" data-row-client="${c.id}">
+              <td><strong>${c.legal_name}</strong></td>
+              <td>${isoToDMY(c.financial_year_end) || "-"}</td>
+              <td>${money(c.audit_fee)}</td>
+              <td>${money(c.invoice_to_date)}</td>
+              <td>${c.branch || "-"}</td>
+              <td>${c.outstanding_work_orders > 0 ? `<span class="status-badge status-wip">${c.outstanding_work_orders} outstanding</span>` : `<span class="status-badge status-completed">None</span>`}</td>
+              <td class="row-actions">
+                <button class="icon-btn icon-btn-edit" data-edit="${c.id}" title="Edit">${EDIT_ICON}</button>
+                <button class="icon-btn icon-btn-delete" data-delete="${c.id}" data-name="${c.legal_name}" title="Delete">${DELETE_ICON}</button>
+              </td>
+            </tr>`
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+  wrap.querySelectorAll("tr[data-row-client]").forEach((tr) => {
+    tr.addEventListener("click", (e) => {
+      if (e.target.closest(".row-actions")) return;
+      const row = allClients.find((c) => c.id === tr.dataset.rowClient);
+      if (row) openClientDetailsModal(row);
+    });
+  });
+
+  wrap.querySelectorAll("[data-edit]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const row = allClients.find((c) => c.id === btn.dataset.edit);
+      openClientModal(row);
+    });
+  });
+
+  wrap.querySelectorAll("[data-delete]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm(`Delete ${btn.dataset.name}? This also removes their contacts, assignments, and deadlines. This cannot be undone.`)) return;
+      const { error: delError } = await supabase.from("clients").delete().eq("id", btn.dataset.delete);
+      if (delError) { alert("Could not delete: " + delError.message); return; }
+      await loadAndRenderTable();
+    });
+  });
+}
+
+async function openClientDetailsModal(client) {
+  const orgId = getIdentity()?.organisationId;
+
+  const [{ data: contact }, { data: workOrders }] = await Promise.all([
+    supabase.from("client_contacts").select("name, email, phone").eq("client_id", client.id).eq("is_primary", true).maybeSingle(),
+    supabase
+      .from("work_orders")
+      .select("id, order_type, financial_year_end, deadline_date, status, description, professional_fee, ope, client_id, assigned_user_id, profiles!assigned_user_id(display_name, email)")
+      .eq("client_id", client.id)
+      .order("deadline_date", { ascending: true, nullsFirst: false }),
+  ]);
+
+  const directors = client.directors || [];
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
+  backdrop.innerHTML = `
+    <div class="modal-card" style="max-width:720px;">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Client Details</h2>
+          <p class="modal-subtitle">Comprehensive information about the client</p>
+        </div>
+        <button type="button" id="modal-close-btn" class="modal-close" aria-label="Close">&times;</button>
+      </div>
+
+      <div class="modal-grid">
+        <div><label class="option-label">Company Name</label><div>${client.legal_name}</div></div>
+        <div><label class="option-label">Registration Number</label><div>${client.registration_number || "-"}</div></div>
+        <div class="full-width"><label class="option-label">Company Address</label><div>${client.company_address || "-"}</div></div>
+        <div><label class="option-label">Contact Person</label><div>${contact?.name || "-"}</div></div>
+        <div><label class="option-label">Email</label><div>${contact?.email || "-"}</div></div>
+        <div><label class="option-label">Phone</label><div>${contact?.phone || "-"}</div></div>
+        <div><label class="option-label">Financial Year End</label><div>${isoToDMY(client.financial_year_end) || "-"}</div></div>
+        <div><label class="option-label">Status</label><div><span class="status-badge ${statusBadgeClass(client.workflow_status)}">${client.workflow_status}</span></div></div>
+        <div><label class="option-label">Annual Fee</label><div>${money(client.audit_fee)}</div></div>
+        <div><label class="option-label">Branch</label><div>${client.branch || "-"}</div></div>
+        <div><label class="option-label">Industry</label><div>${client.industry || "-"}</div></div>
+      </div>
+
+      ${directors.length ? `
+        <h3 style="margin-top:20px;">Directors</h3>
+        <ul style="margin:8px 0 0;padding-left:20px;">
+          ${directors.map((d) => `<li>${d}</li>`).join("")}
+        </ul>` : ""}
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:24px;">
+        <h3 style="margin:0;">Work Orders</h3>
+        ${isFirmAdmin() ? `<button id="add-wo-from-client-btn" class="btn-dark" style="width:auto;">+ Add Work Order</button>` : ""}
+      </div>
+      <div id="client-wo-table-wrap" style="margin-top:12px;"></div>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+
+  async function refreshClientWorkOrders() {
+    const { data: refreshed } = await supabase
+      .from("work_orders")
+      .select("id, order_type, financial_year_end, deadline_date, status, description, professional_fee, ope, client_id, assigned_user_id, profiles!assigned_user_id(display_name, email)")
+      .eq("client_id", client.id)
+      .order("deadline_date", { ascending: true, nullsFirst: false });
+    renderWorkOrdersTable(document.getElementById("client-wo-table-wrap"), refreshed || [], { showClient: false, onChanged: refreshClientWorkOrders });
+  }
+
+  renderWorkOrdersTable(document.getElementById("client-wo-table-wrap"), workOrders || [], {
+    showClient: false,
+    onChanged: refreshClientWorkOrders,
+  });
+
+  const addWoBtn = document.getElementById("add-wo-from-client-btn");
+  if (addWoBtn) {
+    addWoBtn.addEventListener("click", () => {
+      openWorkOrderModal({ clientId: client.id, onSaved: refreshClientWorkOrders });
+    });
+  }
+
+  const close = () => backdrop.remove();
+  document.getElementById("modal-close-btn").addEventListener("click", close);
+  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+}
+
+async function openClientModal(existing) {
+  const isEdit = !!existing;
+  let primaryContact = { name: "", email: "", phone: "" };
+
+  if (isEdit) {
+    const { data } = await supabase
+      .from("client_contacts")
+      .select("id, name, email, phone")
+      .eq("client_id", existing.id)
+      .eq("is_primary", true)
+      .maybeSingle();
+    if (data) primaryContact = data;
+  }
+
+  const directors = existing?.directors || [];
+  const directorInput = (i) => `<input type="text" id="cf-director-${i}" placeholder="Director ${i + 1} name" value="${directors[i] ?? ""}" />`;
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
+  backdrop.innerHTML = `
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">${isEdit ? "Edit Client" : "Add New Client"}</h2>
+          <p class="modal-subtitle">${isEdit ? "Update this client's information" : "Enter information for the new client"}</p>
+        </div>
+        <button type="button" id="modal-close-btn" class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <form id="client-form">
+        <div class="modal-grid">
+          <label>Company Name
+            <input type="text" id="cf-legal-name" required value="${existing?.legal_name ?? ""}" />
+          </label>
+          <label>Registration Number
+            <input type="text" id="cf-reg-number" value="${existing?.registration_number ?? ""}" />
+          </label>
+
+          <label>Contact Person
+            <input type="text" id="cf-contact-name" value="${primaryContact.name ?? ""}" />
+          </label>
+          <label>Email
+            <input type="email" id="cf-contact-email" value="${primaryContact.email ?? ""}" />
+          </label>
+
+          <label>Phone
+            <input type="text" id="cf-contact-phone" value="${primaryContact.phone ?? ""}" />
+          </label>
+          <label>Financial Year End
+            <input type="text" id="cf-fye" placeholder="31/12/2025" autocomplete="off" value="${isoToDMY(existing?.financial_year_end)}" />
+          </label>
+
+          <label>Industry
+            <input type="text" id="cf-industry" value="${existing?.industry ?? ""}" />
+          </label>
+          <label>Annum Fee ($)
+            <input type="number" step="0.01" id="cf-audit-fee" value="${existing?.audit_fee ?? ""}" />
+          </label>
+
+          <label class="full-width">Branch
+            <input type="text" id="cf-branch" value="${existing?.branch ?? ""}" />
+          </label>
+
+          <label class="full-width">Company Address
+            <input type="text" id="cf-address" value="${existing?.company_address ?? ""}" />
+          </label>
+
+          <div class="full-width">
+            <p class="directors-label">Directors (up to 5)</p>
+            <div class="modal-grid" style="margin-top:6px;">
+              ${directorInput(0)}${directorInput(1)}${directorInput(2)}${directorInput(3)}
+              <div>${directorInput(4)}</div>
+            </div>
+          </div>
+        </div>
+
+        <p id="cf-error" class="form-error hidden"></p>
+
+        <div class="modal-actions">
+          <button type="button" id="cf-cancel" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-dark">${isEdit ? "Save Changes" : "Add Client"}</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+
+  try {
+    await loadFlatpickr();
+    window.flatpickr("#cf-fye", { dateFormat: "d/m/Y", allowInput: true });
+  } catch (err) {
+    console.warn(err.message);
+  }
+
+  const close = () => backdrop.remove();
+  document.getElementById("modal-close-btn").addEventListener("click", close);
+  document.getElementById("cf-cancel").addEventListener("click", close);
+  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+
+  document.getElementById("client-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const orgId = getIdentity()?.organisationId;
+    const errorEl = document.getElementById("cf-error");
+
+    const fyeText = document.getElementById("cf-fye").value.trim();
+    const parsedFye = fyeText ? dmyToISO(fyeText) : null;
+    if (fyeText && parsedFye === undefined) {
+      errorEl.textContent = `Could not understand the date "${fyeText}". Use DD/MM/YYYY, e.g. 31/12/2025.`;
+      errorEl.classList.remove("hidden");
+      return;
+    }
+
+    const directorsList = [0, 1, 2, 3, 4]
+      .map((i) => document.getElementById(`cf-director-${i}`).value.trim())
+      .filter(Boolean);
+
+    const payload = {
+      organisation_id: orgId,
+      legal_name: document.getElementById("cf-legal-name").value.trim(),
+      registration_number: document.getElementById("cf-reg-number").value.trim() || null,
+      financial_year_end: parsedFye || null,
+      audit_fee: document.getElementById("cf-audit-fee").value || null,
+      branch: document.getElementById("cf-branch").value.trim() || null,
+      industry: document.getElementById("cf-industry").value.trim() || null,
+      company_address: document.getElementById("cf-address").value.trim() || null,
+      directors: directorsList.length ? directorsList : null,
+    };
+
+    let clientId = existing?.id;
+    if (isEdit) {
+      const { error } = await supabase.from("clients").update(payload).eq("id", clientId);
+      if (error) { errorEl.textContent = "Could not save: " + error.message; errorEl.classList.remove("hidden"); return; }
+    } else {
+      const { data, error } = await supabase.from("clients").insert(payload).select().single();
+      if (error) { errorEl.textContent = "Could not save: " + error.message; errorEl.classList.remove("hidden"); return; }
+      clientId = data.id;
+    }
+
+    const contactName = document.getElementById("cf-contact-name").value.trim();
+    const contactEmail = document.getElementById("cf-contact-email").value.trim();
+    const contactPhone = document.getElementById("cf-contact-phone").value.trim();
+    if (contactName || contactEmail || contactPhone) {
+      if (primaryContact.id) {
+        await supabase.from("client_contacts").update({ name: contactName || null, email: contactEmail || null, phone: contactPhone || null }).eq("id", primaryContact.id);
+      } else {
+        await supabase.from("client_contacts").insert({ organisation_id: orgId, client_id: clientId, name: contactName || null, email: contactEmail || null, phone: contactPhone || null, is_primary: true });
+      }
+    }
+
+    close();
+    resetFilters();
+    await loadAndRenderTable();
+  });
+}
+
+async function handleImportFile(file) {
+  const orgId = getIdentity()?.organisationId;
+  const importSection = document.getElementById("import-section");
+  importSection.innerHTML = `<div class="import-card"><p class="hint">Loading spreadsheet library...</p></div>`;
+
+  try {
+    await loadSheetJS();
+  } catch (err) {
+    importSection.innerHTML = `<div class="import-card"><p class="form-error">${err.message}</p></div>`;
+    return;
+  }
+
+  const buffer = await file.arrayBuffer();
+  const workbook = window.XLSX.read(buffer, { type: "array", cellDates: true });
+  const { rows, error, sheetName } = parseClientWorkbook(workbook);
+
+  if (error) {
+    importSection.innerHTML = `<div class="import-card"><p class="form-error">${error}</p></div>`;
+    return;
+  }
+
+  const { data: existingClients } = await supabase.from("clients").select("legal_name").eq("organisation_id", orgId);
+  const existingNormalizedNames = new Set((existingClients || []).map((c) => c.legal_name.trim().toLowerCase()));
+
+  const validatedRows = rows.map((r) => validateRow(r, existingNormalizedNames));
+  const counts = validatedRows.reduce((acc, r) => { acc[r.status] = (acc[r.status] || 0) + 1; return acc; }, {});
+  const importableCount = (counts.valid || 0) + (counts.warning || 0);
+
+  importSection.innerHTML = `
+    <div class="import-card">
+      <h3>Import Review — "${sheetName}" sheet</h3>
+      <div class="kpi-grid" style="margin-bottom:16px;">
+        <div class="kpi-card"><div class="kpi-value">${validatedRows.length}</div><div class="kpi-label">Total rows</div></div>
+        <div class="kpi-card"><div class="kpi-value">${counts.valid || 0}</div><div class="kpi-label">Valid</div></div>
+        <div class="kpi-card"><div class="kpi-value">${counts.warning || 0}</div><div class="kpi-label">Warnings</div></div>
+        <div class="kpi-card"><div class="kpi-value">${counts.rejected || 0}</div><div class="kpi-label">Rejected</div></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Row</th><th>Company</th><th>FYE</th><th>Branch</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          ${validatedRows
+            .map(
+              (r) => `<tr>
+                <td>${r.source_row}</td><td>${r.company_name}</td><td>${r.fye || "-"}</td>
+                <td>${r.branch || "-"}</td>
+                <td><span class="status-badge status-${r.status}">${r.status}</span></td>
+                <td>${r.issues.join("; ") || "-"}</td>
+              </tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+      <div style="margin-top:16px;display:flex;gap:12px;">
+        <button id="confirm-import-btn" class="btn-primary" style="width:auto;" ${importableCount === 0 ? "disabled" : ""}>
+          Confirm Import (${importableCount} row${importableCount === 1 ? "" : "s"})
+        </button>
+        <button id="cancel-import-btn" class="btn-link">Cancel</button>
+      </div>
+      <p id="import-result" class="hint"></p>
+    </div>
+  `;
+
+  document.getElementById("cancel-import-btn").addEventListener("click", () => { importSection.innerHTML = ""; });
+
+  const confirmBtn = document.getElementById("confirm-import-btn");
+  confirmBtn?.addEventListener("click", async () => {
+    const resultEl = document.getElementById("import-result");
+    const rowsToImport = validatedRows.filter((r) => r.status !== "rejected");
+    if (!rowsToImport.length) { resultEl.textContent = "Nothing to import."; return; }
+
+    confirmBtn.disabled = true;
+    resultEl.textContent = "Importing...";
+
+    const { data: batch, error: batchError } = await supabase
+      .from("import_batches")
+      .insert({ organisation_id: orgId, filename: file.name, imported_by: getIdentity().user.id, status: "pending" })
+      .select()
+      .single();
+
+    if (batchError) {
+      resultEl.textContent = "Could not start import: " + batchError.message;
+      confirmBtn.disabled = false;
+      return;
+    }
+
+    const { data, error: importError } = await supabase.rpc("import_completed_rows", {
+      import_batch_uuid: batch.id,
+      rows_jsonb: rowsToImport,
+    });
+
+    if (importError) {
+      resultEl.textContent = "Import failed: " + importError.message;
+      confirmBtn.disabled = false;
+      return;
+    }
+    resultEl.textContent = `Done — ${data.inserted} row(s) imported, ${data.skipped} skipped.`;
+    resetFilters();
+    await loadAndRenderTable();
+  });
+}
+
+// ===== resources.js =====
+// assets/js/resources.js
+async function renderResources(el) {
+  el.innerHTML = `
+    <div class="page-header"><h1>Resources</h1></div>
+    <div class="empty-state">
+      <p>Private Supabase Storage file browser lands here in Phase 8.</p>
+    </div>`;
+}
+
+// ===== ai-bot.js =====
+// assets/js/ai-bot.js
+
+const CATEGORY_STYLES = {
+  Audit: { bg: "#eff6ff", text: "#2563eb", icon: "📊" },
+  Tax: { bg: "#ecfdf5", text: "#059669", icon: "🧮" },
+  Automation: { bg: "#f5f3ff", text: "#7c3aed", icon: "📄" },
+  Insights: { bg: "#fff7ed", text: "#ea580c", icon: "💡" },
+  General: { bg: "#fefce8", text: "#ca8a04", icon: "💬" },
+};
+const DEFAULT_STYLE = { bg: "#f3f4f6", text: "#4b5563", icon: "🤖" };
+
+function styleFor(category) {
+  return CATEGORY_STYLES[category] || DEFAULT_STYLE;
+}
+
+async function renderAiBot(el) {
+  el.innerHTML = `
+    <div class="page-header">
+      <div>
+        <h1>AI Bot</h1>
+        <p class="page-subtitle">Your AI assistants for audit and financial tasks.</p>
+      </div>
+      <div class="page-actions" id="ai-bot-header-actions"></div>
+    </div>
+    <div id="ai-bot-grid" class="ai-bot-grid">Loading...</div>
+  `;
+
+  if (isFirmAdmin()) {
+    document.getElementById("ai-bot-header-actions").innerHTML = `<button id="add-ai-bot-btn" class="btn-dark">+ Add New AI Bot</button>`;
+    document.getElementById("add-ai-bot-btn").addEventListener("click", () => openAiBotModal());
+  }
+
+  await loadAndRenderGrid();
+}
+
+async function loadAndRenderGrid() {
+  const orgId = getIdentity()?.organisationId;
+  const grid = document.getElementById("ai-bot-grid");
+  const { data, error } = await supabase
+    .from("ai_tools")
+    .select("id, name, url, description, category")
+    .eq("organisation_id", orgId)
+    .eq("active", true)
+    .order("sort_order");
+
+  if (error) {
+    grid.innerHTML = `<div class="empty-state">Could not load AI tools.</div>`;
+    return;
+  }
+
+  const cards = (data || [])
+    .map((tool) => {
+      const s = styleFor(tool.category);
+      return `
+        <div class="ai-bot-card">
+          <div class="ai-bot-icon-circle" style="background:${s.bg};">${s.icon}</div>
+          <h3 class="ai-bot-name">${tool.name}</h3>
+          <p class="ai-bot-description">${tool.description ?? ""}</p>
+          ${tool.category ? `<span class="ai-bot-tag" style="background:${s.bg};color:${s.text};">${tool.category}</span>` : ""}
+          <a href="${tool.url}" target="_blank" rel="noopener" class="ai-bot-open-btn">↗ Open</a>
+        </div>`;
+    })
+    .join("");
+
+  const addCard = isFirmAdmin()
+    ? `
+      <button id="add-ai-bot-card" class="ai-bot-add-card">
+        <span class="ai-bot-add-icon">+</span>
+        <span class="ai-bot-add-title">Add New AI Bot</span>
+        <span class="ai-bot-add-hint">Create a new AI assistant by adding name, description and link.</span>
+      </button>`
+    : "";
+
+  grid.innerHTML = cards + addCard;
+
+  const addCardBtn = document.getElementById("add-ai-bot-card");
+  if (addCardBtn) addCardBtn.addEventListener("click", () => openAiBotModal());
+}
+
+function openAiBotModal() {
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
+  backdrop.innerHTML = `
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Add New AI Bot</h2>
+          <p class="modal-subtitle">Add a name, description, and link to your AI tool.</p>
+        </div>
+        <button type="button" id="modal-close-btn" class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <form id="ai-bot-form">
+        <label style="display:block;margin-bottom:14px;">Name
+          <input type="text" id="ab-name" required style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;" />
+        </label>
+        <label style="display:block;margin-bottom:14px;">Description
+          <input type="text" id="ab-description" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;" />
+        </label>
+        <label style="display:block;margin-bottom:4px;">URL
+          <input type="url" id="ab-url" required placeholder="https://" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;" />
+        </label>
+        <p id="ab-error" class="form-error hidden"></p>
+        <div class="modal-actions">
+          <button type="button" id="ab-cancel" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-dark">Add Bot</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+
+  const close = () => backdrop.remove();
+  document.getElementById("modal-close-btn").addEventListener("click", close);
+  document.getElementById("ab-cancel").addEventListener("click", close);
+  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+
+  document.getElementById("ai-bot-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const orgId = getIdentity()?.organisationId;
+    const errorEl = document.getElementById("ab-error");
+
+    const payload = {
+      organisation_id: orgId,
+      name: document.getElementById("ab-name").value.trim(),
+      description: document.getElementById("ab-description").value.trim() || null,
+      url: document.getElementById("ab-url").value.trim(),
+    };
+
+    const { error } = await supabase.from("ai_tools").insert(payload);
+    if (error) {
+      errorEl.textContent = "Could not save: " + error.message;
+      errorEl.classList.remove("hidden");
+      return;
+    }
+
+    close();
+    await loadAndRenderGrid();
+  });
+}
+
+// ===== users.js =====
+// assets/js/users.js
+
+const KEY_ICON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg>`;
+
+const inputStyle = "width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;";
+const labelStyle = "display:block;margin-bottom:14px;";
+
+async function renderUsers(el) {
+  el.innerHTML = `
+    <div class="page-header">
+      <h1>User Management</h1>
+      <div class="page-actions">
+        <button id="add-user-btn" class="btn-dark">+ Add User</button>
+      </div>
+    </div>
+    <div id="users-table-wrap" class="import-card">Loading...</div>
+  `;
+
+  document.getElementById("add-user-btn").addEventListener("click", () => openAddUserModal());
+
+  await loadAndRenderUsers();
+}
+
+async function loadAndRenderUsers() {
+  const orgId = getIdentity()?.organisationId;
+  const wrap = document.getElementById("users-table-wrap");
+
+  const { data, error } = await supabase
+    .from("organisation_members")
+    .select("user_id, role, status, profiles(display_name, email, designation)")
+    .eq("organisation_id", orgId)
+    .order("role");
+
+  if (error) {
+    wrap.innerHTML = `<div class="empty-state">Could not load users.</div>`;
+    return;
+  }
+  if (!data.length) {
+    wrap.innerHTML = `<div class="empty-state">No users yet.</div>`;
+    return;
+  }
+
+  const selfId = getIdentity()?.user?.id;
+
+  wrap.innerHTML = `
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Designation</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${data
+          .map((m) => {
+            const isSelf = m.user_id === selfId;
+            return `<tr>
+              <td><strong>${m.profiles?.display_name || "-"}</strong>${isSelf ? ' <span class="hint">(you)</span>' : ""}</td>
+              <td>${m.profiles?.email || "-"}</td>
+              <td>${m.profiles?.designation || "-"}</td>
+              <td><span class="status-badge ${m.role === "firm_admin" ? "status-completed" : "status-quotation"}">${m.role === "firm_admin" ? "Firm Admin" : "Staff"}</span></td>
+              <td><span class="status-badge ${m.status === "active" ? "status-completed" : "status-rejected"}">${m.status === "active" ? "Active" : "Inactive"}</span></td>
+              <td class="row-actions">
+                <button class="icon-btn icon-btn-edit" data-edit="${m.user_id}" title="Edit">${EDIT_ICON}</button>
+                <button class="icon-btn icon-btn-edit" data-reset="${m.user_id}" title="Reset Password">${KEY_ICON}</button>
+                ${isSelf ? "" : `<button class="icon-btn icon-btn-delete" data-delete="${m.user_id}" data-name="${m.profiles?.display_name || m.profiles?.email}" title="Delete">${DELETE_ICON}</button>`}
+              </td>
+            </tr>`;
+          })
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+  const byId = Object.fromEntries(data.map((m) => [m.user_id, m]));
+
+  wrap.querySelectorAll("[data-edit]").forEach((btn) => {
+    btn.addEventListener("click", () => openEditUserModal(byId[btn.dataset.edit]));
+  });
+  wrap.querySelectorAll("[data-reset]").forEach((btn) => {
+    btn.addEventListener("click", () => openResetPasswordModal(byId[btn.dataset.reset]));
+  });
+  wrap.querySelectorAll("[data-delete]").forEach((btn) => {
+    btn.addEventListener("click", () => confirmDeleteUser(btn.dataset.delete, btn.dataset.name));
+  });
+}
+
+function buildModal({ title, subtitle, bodyHtml, submitLabel }) {
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
+  backdrop.innerHTML = `
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">${title}</h2>
+          <p class="modal-subtitle">${subtitle}</p>
+        </div>
+        <button type="button" id="modal-close-btn" class="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <form id="modal-form">
+        ${bodyHtml}
+        <p id="modal-error" class="form-error hidden"></p>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel-btn" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-dark">${submitLabel}</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(backdrop);
+  const close = () => backdrop.remove();
+  document.getElementById("modal-close-btn").addEventListener("click", close);
+  document.getElementById("modal-cancel-btn").addEventListener("click", close);
+  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+  return { backdrop, close };
+}
+
+function openAddUserModal() {
+  const { close } = buildModal({
+    title: "Add User",
+    subtitle: "Set an initial password — they'll be asked to change it on first login.",
+    submitLabel: "Add User",
+    bodyHtml: `
+      <label style="${labelStyle}">Name
+        <input type="text" id="au-name" required style="${inputStyle}" />
+      </label>
+      <label style="${labelStyle}">Email
+        <input type="email" id="au-email" required style="${inputStyle}" />
+      </label>
+      <label style="${labelStyle}">Designation
+        <input type="text" id="au-designation" placeholder="e.g. Audit Senior" style="${inputStyle}" />
+      </label>
+      <label style="${labelStyle}">Role
+        <select id="au-role" style="${inputStyle}">
+          <option value="staff">Staff</option>
+          <option value="firm_admin">Firm Admin</option>
+        </select>
+      </label>
+      <label style="${labelStyle}">Password
+        <input type="text" id="au-password" required minlength="8" placeholder="At least 8 characters" style="${inputStyle}" />
+      </label>
+    `,
+  });
+
+  document.getElementById("modal-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const orgId = getIdentity()?.organisationId;
+    const errorEl = document.getElementById("modal-error");
+    const submitBtn = e.target.querySelector("button[type=submit]");
+
+    const payload = {
+      email: document.getElementById("au-email").value.trim(),
+      display_name: document.getElementById("au-name").value.trim(),
+      designation: document.getElementById("au-designation").value.trim(),
+      role: document.getElementById("au-role").value,
+      password: document.getElementById("au-password").value,
+      organisation_id: orgId,
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Adding...";
+
+    const { data, error } = await supabase.functions.invoke("create-user", { body: payload });
+
+    if (error || data?.error) {
+      errorEl.textContent = "Could not add user: " + (data?.error || error.message);
+      errorEl.classList.remove("hidden");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Add User";
+      return;
+    }
+
+    close();
+    await loadAndRenderUsers();
+  });
+}
+
+function openEditUserModal(member) {
+  const { close } = buildModal({
+    title: "Edit User",
+    subtitle: `Update ${member.profiles?.display_name || member.profiles?.email}'s details.`,
+    submitLabel: "Save Changes",
+    bodyHtml: `
+      <label style="${labelStyle}">Name
+        <input type="text" id="eu-name" required value="${member.profiles?.display_name ?? ""}" style="${inputStyle}" />
+      </label>
+      <label style="${labelStyle}">Designation
+        <input type="text" id="eu-designation" value="${member.profiles?.designation ?? ""}" style="${inputStyle}" />
+      </label>
+      <label style="${labelStyle}">Role
+        <select id="eu-role" style="${inputStyle}">
+          <option value="staff" ${member.role === "staff" ? "selected" : ""}>Staff</option>
+          <option value="firm_admin" ${member.role === "firm_admin" ? "selected" : ""}>Firm Admin</option>
+        </select>
+      </label>
+      <label style="${labelStyle}">Status
+        <select id="eu-status" style="${inputStyle}">
+          <option value="active" ${member.status === "active" ? "selected" : ""}>Active</option>
+          <option value="inactive" ${member.status === "inactive" ? "selected" : ""}>Inactive</option>
+        </select>
+      </label>
+    `,
+  });
+
+  document.getElementById("modal-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const orgId = getIdentity()?.organisationId;
+    const errorEl = document.getElementById("modal-error");
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({
+        display_name: document.getElementById("eu-name").value.trim(),
+        designation: document.getElementById("eu-designation").value.trim() || null,
+      })
+      .eq("id", member.user_id);
+
+    const { error: memberError } = await supabase
+      .from("organisation_members")
+      .update({
+        role: document.getElementById("eu-role").value,
+        status: document.getElementById("eu-status").value,
+      })
+      .eq("user_id", member.user_id)
+      .eq("organisation_id", orgId);
+
+    if (profileError || memberError) {
+      errorEl.textContent = "Could not save: " + (profileError?.message || memberError?.message);
+      errorEl.classList.remove("hidden");
+      return;
+    }
+
+    close();
+    await loadAndRenderUsers();
+  });
+}
+
+function openResetPasswordModal(member) {
+  const { close } = buildModal({
+    title: "Reset Password",
+    subtitle: `Set a new temporary password for ${member.profiles?.display_name || member.profiles?.email}. They'll be asked to change it on next login.`,
+    submitLabel: "Reset Password",
+    bodyHtml: `
+      <label style="${labelStyle}">New Password
+        <input type="text" id="rp-password" required minlength="8" placeholder="At least 8 characters" style="${inputStyle}" />
+      </label>
+    `,
+  });
+
+  document.getElementById("modal-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const orgId = getIdentity()?.organisationId;
+    const errorEl = document.getElementById("modal-error");
+    const submitBtn = e.target.querySelector("button[type=submit]");
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Resetting...";
+
+    const { data, error } = await supabase.functions.invoke("reset-user-password", {
+      body: { organisation_id: orgId, user_id: member.user_id, new_password: document.getElementById("rp-password").value },
+    });
+
+    if (error || data?.error) {
+      errorEl.textContent = "Could not reset password: " + (data?.error || error.message);
+      errorEl.classList.remove("hidden");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Reset Password";
+      return;
+    }
+
+    close();
+  });
+}
+
+async function confirmDeleteUser(userId, name) {
+  if (!confirm(`Delete ${name}? This permanently removes their account and cannot be undone.`)) return;
+
+  const orgId = getIdentity()?.organisationId;
+  const { data, error } = await supabase.functions.invoke("delete-user", {
+    body: { organisation_id: orgId, user_id: userId },
+  });
+
+  if (error || data?.error) {
+    alert("Could not delete user: " + (data?.error || error.message));
+    return;
+  }
+
+  await loadAndRenderUsers();
+}
+
+// ===== settings.js =====
+// assets/js/settings.js
+
+async function renderSettings(el) {
+  el.innerHTML = `
+    <div class="page-header"><h1>Firm Settings</h1></div>
+    <div class="import-card">
+      <h3>Firm Profile</h3>
+      <p class="hint">Your firm name and logo appear on the workspace spotlight board that everyone sees.</p>
+      <label style="display:block;max-width:360px;margin-bottom:16px;">Firm Name
+        <input type="text" id="firm-name-input" style="width:100%;margin-top:6px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;" />
+      </label>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <div>
+          <p class="option-label">Firm Logo</p>
+          <div id="logo-preview" class="asset-preview"></div>
+          <input type="file" id="logo-file-input" accept="image/*" class="hidden" />
+          <button id="logo-upload-btn" class="btn-secondary" style="margin-top:8px;">Upload Logo</button>
+        </div>
+      </div>
+      <button id="save-firm-name-btn" class="btn-dark" style="margin-top:16px;">Save Firm Name</button>
+      <p id="firm-profile-error" class="form-error hidden"></p>
+    </div>
+
+    <div class="import-card">
+      <h3>Virtual Workspace Background</h3>
+      <p class="hint">Upload a photo of your actual office (or any background you like) to use in the Virtual Workspace instead of the default layout. Avatars and the AI Assistant will appear on top of it.</p>
+      <div id="bg-preview" class="asset-preview" style="width:100%;max-width:480px;height:160px;"></div>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <input type="file" id="bg-file-input" accept="image/*" class="hidden" />
+        <button id="bg-upload-btn" class="btn-secondary">Upload Background</button>
+        <button id="bg-reset-btn" class="btn-secondary">Reset to Default</button>
+      </div>
+      <p id="bg-error" class="form-error hidden"></p>
+    </div>
+  `;
+
+  const identity = getIdentity();
+  const orgId = identity.organisationId;
+
+  const [{ data: org }, { data: orgSettings }] = await Promise.all([
+    supabase.from("organisations").select("id, name").eq("id", orgId).single(),
+    supabase.from("organisation_settings").select("logo_url, workspace_background_url").eq("organisation_id", orgId).maybeSingle(),
+  ]);
+
+  document.getElementById("firm-name-input").value = org?.name || "";
+  renderAssetPreview("logo-preview", orgSettings?.logo_url, "Logo");
+  renderAssetPreview("bg-preview", orgSettings?.workspace_background_url, "Background");
+
+  document.getElementById("save-firm-name-btn").addEventListener("click", async () => {
+    const errorEl = document.getElementById("firm-profile-error");
+    const { error } = await supabase.from("organisations").update({ name: document.getElementById("firm-name-input").value.trim() }).eq("id", orgId);
+    if (error) { errorEl.textContent = "Could not save: " + error.message; errorEl.classList.remove("hidden"); return; }
+    errorEl.classList.add("hidden");
+  });
+
+  const logoInput = document.getElementById("logo-file-input");
+  document.getElementById("logo-upload-btn").addEventListener("click", () => logoInput.click());
+  logoInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    await uploadFirmAsset(file, "logo", "logo_url", "logo-preview", "firm-profile-error");
+    logoInput.value = "";
+  });
+
+  const bgInput = document.getElementById("bg-file-input");
+  document.getElementById("bg-upload-btn").addEventListener("click", () => bgInput.click());
+  bgInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    await uploadFirmAsset(file, "workspace-bg", "workspace_background_url", "bg-preview", "bg-error");
+    bgInput.value = "";
+  });
+
+  document.getElementById("bg-reset-btn").addEventListener("click", async () => {
+    const errorEl = document.getElementById("bg-error");
+    const { error } = await supabase.from("organisation_settings").update({ workspace_background_url: null }).eq("organisation_id", orgId);
+    if (error) { errorEl.textContent = "Could not reset: " + error.message; errorEl.classList.remove("hidden"); return; }
+    renderAssetPreview("bg-preview", null, "Background");
+    errorEl.classList.add("hidden");
+  });
+}
+
+function renderAssetPreview(elementId, url, label) {
+  const el = document.getElementById(elementId);
+  el.innerHTML = url ? `<img src="${url}" alt="${label}" />` : `<span class="hint">No ${label.toLowerCase()} set</span>`;
+}
+
+async function uploadFirmAsset(file, filenamePrefix, dbColumn, previewElId, errorElId) {
+  const identity = getIdentity();
+  const orgId = identity.organisationId;
+  const errorEl = document.getElementById(errorElId);
+  errorEl.classList.add("hidden");
+
+  const ext = file.name.split(".").pop();
+  const path = `${orgId}/${filenamePrefix}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage.from("firm-assets").upload(path, file, { upsert: true });
+  if (uploadError) {
+    errorEl.textContent = "Could not upload: " + uploadError.message;
+    errorEl.classList.remove("hidden");
+    return;
+  }
+
+  const { data: urlData } = supabase.storage.from("firm-assets").getPublicUrl(path);
+  const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`; // cache-bust so updates show immediately
+
+  const { error: dbError } = await supabase
+    .from("organisation_settings")
+    .update({ [dbColumn]: publicUrl })
+    .eq("organisation_id", orgId);
+
+  if (dbError) {
+    errorEl.textContent = "Uploaded, but could not save reference: " + dbError.message;
+    errorEl.classList.remove("hidden");
+    return;
+  }
+
+  renderAssetPreview(previewElId, publicUrl, filenamePrefix === "logo" ? "Logo" : "Background");
+}
+
+// ===== workspace.js =====
+// assets/js/workspace.js
+
+// ---------- avatar rendering (local SVG — no network dependency) ----------
+const DEFAULT_SETTINGS = { base_style: "", skin_tone: "light", hairstyle: "shortHairShortFlat", hair_color: "black", shirt_color: "blue03", has_glasses: false };
+
+const TOP_OPTIONS = [
+  { value: "shortHairShortFlat", label: "Short" },
+  { value: "longHairStraight", label: "Long" },
+  { value: "noHair", label: "Bald" },
+];
+const HAIR_COLOR_OPTIONS = [
+  { value: "black", swatch: "#2c1b18" },
+  { value: "brownDark", swatch: "#4a312c" },
+  { value: "blonde", swatch: "#e8c88e" },
+  { value: "red", swatch: "#a55728" },
+  { value: "silverGray", swatch: "#b5b5b5" },
+];
+const SKIN_OPTIONS = [
+  { value: "light", swatch: "#ffe0bd" },
+  { value: "tanned", swatch: "#eaa971" },
+  { value: "brown", swatch: "#ae5d29" },
+  { value: "darkBrown", swatch: "#7a4530" },
+  { value: "black", swatch: "#5a3a22" },
+];
+const CLOTHES_COLOR_OPTIONS = [
+  { value: "white", swatch: "#f3f4f6" },
+  { value: "blue03", swatch: "#65c9ff" },
+  { value: "gray01", swatch: "#e6e6e6" },
+  { value: "pastelGreen", swatch: "#77dd77" },
+  { value: "red", swatch: "#ff5c5c" },
+  { value: "black", swatch: "#262e33" },
+];
+
+function swatchFor(list, value, fallback) {
+  const found = list.find((o) => o.value === value);
+  return found ? found.swatch : fallback;
+}
+
+// Renders the avatar as an inline SVG string — pure local generation, no
+// image request, so nothing here can ever be blocked by a network/firewall.
+function avatarImg(settings, seed, size = 56) {
+  const s = { ...DEFAULT_SETTINGS, ...settings };
+  const skin = swatchFor(SKIN_OPTIONS, s.skin_tone, SKIN_OPTIONS[0].swatch);
+  const hair = swatchFor(HAIR_COLOR_OPTIONS, s.hair_color, HAIR_COLOR_OPTIONS[0].swatch);
+  const shirt = swatchFor(CLOTHES_COLOR_OPTIONS, s.shirt_color, CLOTHES_COLOR_OPTIONS[0].swatch);
+  const isBald = s.hairstyle === "noHair" || s.hairstyle === "bald";
+  const isLongHair = /long/i.test(s.hairstyle || "") || s.hairstyle === "bob" || s.hairstyle === "ponytail";
+
+  return `
+    <svg viewBox="0 0 60 60" width="${size}" height="${size}" style="flex-shrink:0;">
+      <rect x="8" y="40" width="44" height="18" rx="9" fill="${shirt}" stroke="#e2e5ea" stroke-width="1"/>
+      <circle cx="30" cy="24" r="15" fill="${skin}"/>
+      ${!isBald ? `<path d="M14,20 Q30,2 46,20 L46,${isLongHair ? 32 : 24} Q30,10 14,${isLongHair ? 32 : 24} Z" fill="${hair}"/>` : ""}
+      ${isLongHair && !isBald ? `<circle cx="46" cy="27" r="3.5" fill="${hair}"/>` : ""}
+      ${s.has_glasses ? `
+        <rect x="17" y="22" width="10" height="7" rx="2" fill="none" stroke="#333" stroke-width="1.6"/>
+        <rect x="33" y="22" width="10" height="7" rx="2" fill="none" stroke="#333" stroke-width="1.6"/>
+        <line x1="27" y1="25" x2="33" y2="25" stroke="#333" stroke-width="1.6"/>
+      ` : ""}
+    </svg>`;
+}
+
+// ---------- room layout ----------
+const AI_ROBOT_SVG = `
+  <svg viewBox="0 0 60 60" width="30" height="30">
+    <line x1="30" y1="4" x2="30" y2="12" stroke="#93c5fd" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="30" cy="4" r="3.5" fill="#93c5fd"/>
+    <circle cx="9" cy="30" r="5" fill="#1e3a5f"/>
+    <circle cx="51" cy="30" r="5" fill="#1e3a5f"/>
+    <rect x="10" y="12" width="40" height="34" rx="12" fill="#f3f4f6"/>
+    <rect x="16" y="19" width="28" height="20" rx="7" fill="#0b1220"/>
+    <circle cx="24" cy="29" r="3.2" fill="#60a5fa"/>
+    <circle cx="36" cy="29" r="3.2" fill="#60a5fa"/>
+    <path d="M23,34.5 Q30,39 37,34.5" stroke="#60a5fa" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  </svg>`;
+const ROOM = { width: 860, height: 620 };
+const DESK_ZONE = { top: 150, bottom: 480, left: 120, right: 760 };
+const AI_POSITION = { x: 700, y: 545 };
+const SPEED = 220; // px/sec
+const MIN_DESKS = 10; // always show room for the team you're growing into, not just who's joined so far
+
+// Desks are organized into facing "pods" of 2 (like real desk clusters),
+// with an aisle between pods — not just an evenly-spaced grid.
+function generateDeskSlots(count) {
+  const total = Math.max(count, MIN_DESKS);
+  const podColumns = [200, 280, 600, 680];
+  const rows = Math.ceil(total / podColumns.length);
+  const yStep = rows > 1 ? (DESK_ZONE.bottom - DESK_ZONE.top) / (rows - 1) : 0;
+  const slots = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < podColumns.length; c++) {
+      if (slots.length >= total) break;
+      slots.push({
+        x: podColumns[c],
+        y: rows > 1 ? DESK_ZONE.top + r * yStep : (DESK_ZONE.top + DESK_ZONE.bottom) / 2,
+      });
+    }
+  }
+  return slots;
+}
+
+// ---------- module state ----------
+let orgMembersCache = [];
+let onlineUserIds = new Set();
+let mySettings = { ...DEFAULT_SETTINGS };
+let myPosition = { x: 430, y: 300 };
+let otherPositions = {};
+let officeChannel = null;
+let chatChannel = null;
+let reactionsChannel = null;
+let activeChatRoomId = null;
+let privateRoomsCache = [];
+let keydownHandlerAttached = false;
+let visibleMessages = [];
+
+async function renderWorkspace(el) {
+  el.innerHTML = `
+    <div class="page-header"><h1>Virtual Workspace</h1></div>
+    <div class="workspace-layout">
+      <div class="workspace-main">
+        <div class="import-card">
+          <div class="workspace-toolbar">
+            <h3 style="margin:0;">The Office <span id="online-count" class="hint"></span></h3>
+            <button id="customize-avatar-btn" class="btn-secondary">Customize My Avatar</button>
+          </div>
+          <div id="avatar-customizer"></div>
+          <div id="office-room-wrap">Loading...</div>
+        </div>
+      </div>
+      <div class="workspace-chat import-card">
+        <div class="chat-tabs">
+          <button id="tab-public" class="chat-tab active">Public Chat</button>
+          <button id="tab-private" class="chat-tab">Private Chat</button>
+        </div>
+        <div id="private-room-list" class="private-room-list hidden"></div>
+        <div id="chat-back-row" class="hidden"><button id="chat-back-btn" class="btn-link">← Conversations</button></div>
+        <div id="chat-messages" class="chat-messages">Loading...</div>
+        <form id="chat-form" class="chat-form">
+          <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" />
+          <button type="submit" class="btn-primary" style="width:auto;">Send</button>
+        </form>
+      </div>
+    </div>
+    <div id="ai-assistant-popup" class="ai-assistant-popup hidden"></div>
+  `;
+
+  document.getElementById("customize-avatar-btn").addEventListener("click", toggleCustomizer);
+  document.getElementById("tab-public").addEventListener("click", () => switchTab("public"));
+  document.getElementById("tab-private").addEventListener("click", () => switchTab("private"));
+  document.getElementById("chat-back-btn").addEventListener("click", () => switchTab("private"));
+
+  const identity = getIdentity();
+  const orgId = identity.organisationId;
+
+  const [{ data: members }, { data: myRow }, { data: org }, { data: orgSettings }] = await Promise.all([
+    supabase.from("organisation_members").select("user_id, role, profiles(display_name, email)").eq("organisation_id", orgId).eq("status", "active"),
+    supabase.from("workspace_user_settings").select("*").eq("user_id", identity.user.id).maybeSingle(),
+    supabase.from("organisations").select("name").eq("id", orgId).single(),
+    supabase.from("organisation_settings").select("logo_url, workspace_background_url").eq("organisation_id", orgId).maybeSingle(),
+  ]);
+  orgMembersCache = members || [];
+  if (myRow) mySettings = { ...DEFAULT_SETTINGS, ...myRow };
+
+  const { data: settingsRows } = await supabase.from("workspace_user_settings").select("*").eq("organisation_id", orgId);
+  const settingsByUser = Object.fromEntries((settingsRows || []).map((s) => [s.user_id, s]));
+
+  renderOfficeRoom(settingsByUser, {
+    firmName: org?.name || "",
+    logoUrl: orgSettings?.logo_url || null,
+    backgroundUrl: orgSettings?.workspace_background_url || null,
+  });
+  setupOfficeChannel();
+
+  await openPublicChat();
+
+  if (!keydownHandlerAttached) {
+    keydownHandlerAttached = true;
+    document.addEventListener("keydown", (e) => {
+      const hint = document.getElementById("ai-interact-hint");
+      if ((e.key === "e" || e.key === "E") && hint && !hint.classList.contains("hidden")) {
+        toggleAiPopup();
+      }
+    });
+  }
+}
+
+// ---------- avatar customizer ----------
+async function toggleCustomizer() {
+  const container = document.getElementById("avatar-customizer");
+  if (container.dataset.open === "true") {
+    container.innerHTML = "";
+    container.dataset.open = "false";
+    return;
+  }
+  container.dataset.open = "true";
+  const current = { ...mySettings };
+
+  container.innerHTML = `
+    <div class="avatar-customizer">
+      <div class="avatar-preview" id="avatar-preview">${avatarImg(current, getIdentity().user.id, 84, getIdentity().profile?.display_name)}</div>
+      <div class="avatar-options">
+        <div class="option-group">
+          <label class="option-label">Gender (optional)</label>
+          <div class="swatch-row">
+            <button type="button" class="choice-btn" data-field="base_style" data-value="masculine">Male</button>
+            <button type="button" class="choice-btn" data-field="base_style" data-value="feminine">Female</button>
+            <button type="button" class="choice-btn" data-field="base_style" data-value="">Skip</button>
+          </div>
+        </div>
+        <div class="option-group">
+          <label class="option-label">Hair Style</label>
+          <div class="swatch-row">
+            ${TOP_OPTIONS.map((o) => `<button type="button" class="choice-btn" data-field="hairstyle" data-value="${o.value}">${o.label}</button>`).join("")}
+          </div>
+        </div>
+        <div class="option-group">
+          <label class="option-label">Hair Color</label>
+          <div class="swatch-row">
+            ${HAIR_COLOR_OPTIONS.map((o) => `<button type="button" class="swatch-btn" data-field="hair_color" data-value="${o.value}" style="background:${o.swatch};"></button>`).join("")}
+          </div>
+        </div>
+        <div class="option-group">
+          <label class="option-label">Skin Tone</label>
+          <div class="swatch-row">
+            ${SKIN_OPTIONS.map((o) => `<button type="button" class="swatch-btn" data-field="skin_tone" data-value="${o.value}" style="background:${o.swatch};"></button>`).join("")}
+          </div>
+        </div>
+        <div class="option-group">
+          <label class="option-label">Shirt Color</label>
+          <div class="swatch-row">
+            ${CLOTHES_COLOR_OPTIONS.map((o) => `<button type="button" class="swatch-btn" data-field="shirt_color" data-value="${o.value}" style="background:${o.swatch};border:1px solid var(--gray-200);"></button>`).join("")}
+          </div>
+        </div>
+        <label class="option-label" style="display:flex;align-items:center;gap:8px;font-weight:500;">
+          <input type="checkbox" id="opt-glasses" style="width:auto;" /> Glasses
+        </label>
+        <button id="save-avatar-btn" class="btn-dark" style="margin-top:8px;">Save Avatar</button>
+      </div>
+    </div>
+  `;
+
+  const state = { ...current };
+  document.getElementById("opt-glasses").checked = state.has_glasses;
+
+  function refreshPreview() {
+    document.getElementById("avatar-preview").innerHTML = avatarImg(state, getIdentity().user.id, 84, getIdentity().profile?.display_name);
+    container.querySelectorAll(".swatch-btn, .choice-btn").forEach((btn) => {
+      btn.classList.toggle("selected", state[btn.dataset.field] === btn.dataset.value);
+    });
+  }
+  container.querySelectorAll(".swatch-btn, .choice-btn").forEach((btn) => {
+    btn.addEventListener("click", () => { state[btn.dataset.field] = btn.dataset.value; refreshPreview(); });
+  });
+  document.getElementById("opt-glasses").addEventListener("change", (e) => { state.has_glasses = e.target.checked; refreshPreview(); });
+  refreshPreview();
+
+  document.getElementById("save-avatar-btn").addEventListener("click", async () => {
+    const identity = getIdentity();
+    const { error } = await supabase
+      .from("workspace_user_settings")
+      .upsert({ user_id: identity.user.id, organisation_id: identity.organisationId, ...state }, { onConflict: "user_id" });
+    if (error) { alert("Could not save avatar: " + error.message); return; }
+    mySettings = { ...state };
+    container.innerHTML = "";
+    container.dataset.open = "false";
+    const youEl = document.getElementById("you-avatar");
+    if (youEl) {
+      const svgEl = youEl.querySelector("svg");
+      if (svgEl) svgEl.outerHTML = avatarImg(mySettings, identity.user.id, 44);
+    }
+  });
+}
+
+// ---------- office room ----------
+let roomBranding = { firmName: "", logoUrl: null, backgroundUrl: null };
+
+function renderOfficeRoom(settingsByUser, branding) {
+  if (branding) roomBranding = branding;
+  const wrap = document.getElementById("office-room-wrap");
+  const identity = getIdentity();
+  const selfId = identity.user.id;
+  const others = orgMembersCache.filter((m) => m.user_id !== selfId);
+
+  const deskSlots = generateDeskSlots(others.length);
+  const deskFor = {};
+  others.forEach((m, i) => { deskFor[m.user_id] = deskSlots[i]; });
+  const emptyDeskSlots = deskSlots.slice(others.length);
+
+  const hasCustomBg = !!roomBranding.backgroundUrl;
+  const roomStyle = hasCustomBg
+    ? `background-image:url('${roomBranding.backgroundUrl}');background-size:cover;background-position:center;`
+    : "";
+
+  const spotlightHtml = `
+    <div class="spotlight-board">
+      ${roomBranding.logoUrl ? `<img src="${roomBranding.logoUrl}" alt="Firm logo" class="spotlight-logo" />` : ""}
+      <span class="spotlight-name">${roomBranding.firmName || "Your Firm"}</span>
+    </div>`;
+
+  wrap.innerHTML = `
+    <div id="office-room" class="office-room" style="${roomStyle}">
+      ${spotlightHtml}
+      ${hasCustomBg ? "" : `
+        <div class="furniture furniture-tree" style="left:16px;top:46px;" title="Tree"><div class="tree-canopy"></div><div class="tree-trunk"></div></div>
+        <div class="furniture furniture-tree" style="left:786px;top:46px;" title="Tree"><div class="tree-canopy"></div><div class="tree-trunk"></div></div>
+      `}
+
+      ${hasCustomBg ? "" : emptyDeskSlots.map((desk) => `<div class="desk desk-empty" style="left:${desk.x}px;top:${desk.y}px;"><div class="desk-monitor"></div><div class="desk-chair"></div></div>`).join("")}
+
+      ${others
+        .map((m) => {
+          const desk = deskFor[m.user_id];
+          const pos = otherPositions[m.user_id] || desk;
+          const settings = settingsByUser[m.user_id] || DEFAULT_SETTINGS;
+          const online = onlineUserIds.has(m.user_id);
+          return `
+            ${hasCustomBg ? "" : `<div class="desk" style="left:${desk.x}px;top:${desk.y}px;"><div class="desk-monitor"></div><div class="desk-chair"></div></div>`}
+            <div id="avatar-${m.user_id}" class="room-avatar" style="left:${pos.x}px;top:${pos.y}px;" data-x="${pos.x}" data-y="${pos.y}">
+              ${avatarImg(settings, m.user_id, 44, m.profiles?.display_name || m.profiles?.email)}
+              <span class="name-tag"><span class="presence-dot-inline ${online ? "online" : ""}"></span>${m.profiles?.display_name || m.profiles?.email}</span>
+            </div>`;
+        })
+        .join("")}
+
+      <div id="ai-assistant-avatar" class="room-avatar ai-room-avatar" style="left:${AI_POSITION.x}px;top:${AI_POSITION.y}px;">
+        <div class="ai-room-icon">${AI_ROBOT_SVG}</div>
+        <span class="name-tag">AI Assistant</span>
+        <span id="ai-interact-hint" class="interact-hint hidden">Press E</span>
+      </div>
+
+      <div id="you-avatar" class="room-avatar you-room-avatar" style="left:${myPosition.x}px;top:${myPosition.y}px;" data-x="${myPosition.x}" data-y="${myPosition.y}">
+        ${avatarImg(mySettings, identity.user.id, 44, identity.profile?.display_name)}
+        <span class="name-tag you-tag">You</span>
+      </div>
+
+      <div id="move-marker" class="move-marker hidden"></div>
+    </div>
+    <p class="hint" style="margin-top:8px;">Click anywhere in the room to walk there. Walk near the AI Assistant and press <strong>E</strong> (or click it) to open quick tasks.</p>
+  `;
+
+  document.getElementById("office-room").addEventListener("click", handleRoomClick);
+  document.getElementById("ai-assistant-avatar").addEventListener("click", (e) => { e.stopPropagation(); toggleAiPopup(); });
+
+  updateOnlineCount();
+}
+
+function clampToRoom(x, y) {
+  return { x: Math.max(24, Math.min(ROOM.width - 24, x)), y: Math.max(24, Math.min(ROOM.height - 24, y)) };
+}
+
+function moveAvatarEl(el, x, y) {
+  const prevX = parseFloat(el.dataset.x || x);
+  const prevY = parseFloat(el.dataset.y || y);
+  const dist = Math.hypot(x - prevX, y - prevY);
+  const duration = Math.max(0.15, dist / SPEED);
+  el.style.transition = `left ${duration}s linear, top ${duration}s linear`;
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+  el.dataset.x = x;
+  el.dataset.y = y;
+}
+
+function handleRoomClick(e) {
+  const room = document.getElementById("office-room");
+  const rect = room.getBoundingClientRect();
+  const { x, y } = clampToRoom(e.clientX - rect.left, e.clientY - rect.top);
+  myPosition = { x, y };
+
+  const myEl = document.getElementById("you-avatar");
+  if (myEl) moveAvatarEl(myEl, x, y);
+
+  const marker = document.getElementById("move-marker");
+  if (marker) {
+    marker.style.left = `${x}px`;
+    marker.style.top = `${y}px`;
+    marker.classList.remove("hidden");
+    setTimeout(() => marker.classList.add("hidden"), 500);
+  }
+
+  broadcastPosition(x, y);
+  checkAiProximity();
+}
+
+function checkAiProximity() {
+  const dist = Math.hypot(myPosition.x - AI_POSITION.x, myPosition.y - AI_POSITION.y);
+  const hint = document.getElementById("ai-interact-hint");
+  if (hint) hint.classList.toggle("hidden", dist > 90);
+}
+
+function broadcastPosition(x, y) {
+  if (!officeChannel) return;
+  officeChannel.send({ type: "broadcast", event: "move", payload: { user_id: getIdentity().user.id, x, y } });
+}
+
+function updateOnlineCount() {
+  const el = document.getElementById("online-count");
+  if (el) el.textContent = `· ${onlineUserIds.size} online`;
+}
+
+function setupOfficeChannel() {
+  const identity = getIdentity();
+  const orgId = identity.organisationId;
+  if (officeChannel) supabase.removeChannel(officeChannel);
+
+  officeChannel = supabase.channel(`office-${orgId}`, { config: { presence: { key: identity.user.id }, broadcast: { self: false } } });
+
+  officeChannel
+    .on("presence", { event: "sync" }, () => {
+      const state = officeChannel.presenceState();
+      onlineUserIds = new Set(Object.keys(state));
+      updateOnlineCount();
+      orgMembersCache.forEach((m) => {
+        const el = document.getElementById(`avatar-${m.user_id}`);
+        const dot = el?.querySelector(".presence-dot-inline");
+        if (dot) dot.classList.toggle("online", onlineUserIds.has(m.user_id));
+      });
+    })
+    .on("presence", { event: "join" }, () => {
+      broadcastPosition(myPosition.x, myPosition.y);
+    })
+    .on("broadcast", { event: "move" }, ({ payload }) => {
+      if (payload.user_id === identity.user.id) return;
+      otherPositions[payload.user_id] = { x: payload.x, y: payload.y };
+      const el = document.getElementById(`avatar-${payload.user_id}`);
+      if (el) moveAvatarEl(el, payload.x, payload.y);
+    })
+    .subscribe(async (status) => {
+      if (status === "SUBSCRIBED") {
+        await officeChannel.track({ user_id: identity.user.id });
+        broadcastPosition(myPosition.x, myPosition.y);
+      }
+    });
+}
+
+// ---------- AI Assistant popup ----------
+async function toggleAiPopup() {
+  const popup = document.getElementById("ai-assistant-popup");
+  if (!popup.classList.contains("hidden")) { popup.classList.add("hidden"); return; }
+
+  const orgId = getIdentity()?.organisationId;
+  const { data } = await supabase.from("ai_tools").select("id, name, url, description").eq("organisation_id", orgId).eq("active", true).order("sort_order");
+
+  popup.innerHTML = `
+    <div class="ai-popup-header">AI Assistant</div>
+    ${(data || []).map((tool) => `<a href="${tool.url}" target="_blank" rel="noopener" class="ai-popup-item"><strong>${tool.name}</strong><span>${tool.description ?? ""}</span></a>`).join("") || `<p class="hint" style="padding:12px;">No AI tools configured yet.</p>`}
+  `;
+  popup.classList.remove("hidden");
+}
+
+// ---------- chat: tabs ----------
+function switchTab(tab) {
+  document.getElementById("tab-public").classList.toggle("active", tab === "public");
+  document.getElementById("tab-private").classList.toggle("active", tab === "private");
+
+  if (tab === "public") {
+    document.getElementById("private-room-list").classList.add("hidden");
+    document.getElementById("chat-back-row").classList.add("hidden");
+    document.getElementById("chat-messages").classList.remove("hidden");
+    document.getElementById("chat-form").classList.remove("hidden");
+    openPublicChat();
+  } else {
+    document.getElementById("chat-messages").classList.add("hidden");
+    document.getElementById("chat-form").classList.add("hidden");
+    document.getElementById("chat-back-row").classList.add("hidden");
+    document.getElementById("private-room-list").classList.remove("hidden");
+    loadPrivateRoomList();
+  }
+}
+
+async function loadPrivateRoomList() {
+  const identity = getIdentity();
+  const listEl = document.getElementById("private-room-list");
+  listEl.innerHTML = `<p class="hint">Loading...</p>`;
+
+  const { data: memberRows } = await supabase
+    .from("chat_room_members")
+    .select("room_id, chat_rooms(id, room_type)")
+    .eq("user_id", identity.user.id);
+
+  const privateRoomIds = (memberRows || []).filter((r) => r.chat_rooms?.room_type === "private").map((r) => r.room_id);
+
+  let others = [];
+  if (privateRoomIds.length) {
+    const { data: allMembers } = await supabase.from("chat_room_members").select("room_id, user_id").in("room_id", privateRoomIds);
+    const otherIdByRoom = {};
+    (allMembers || []).forEach((m) => { if (m.user_id !== identity.user.id) otherIdByRoom[m.room_id] = m.user_id; });
+    others = privateRoomIds.map((roomId) => {
+      const otherId = otherIdByRoom[roomId];
+      const member = orgMembersCache.find((m) => m.user_id === otherId);
+      return { roomId, name: member?.profiles?.display_name || member?.profiles?.email || "Unknown" };
+    });
+  }
+  privateRoomsCache = others;
+
+  const selfId = identity.user.id;
+  const candidates = orgMembersCache.filter((m) => m.user_id !== selfId);
+
+  listEl.innerHTML = `
+    <div class="new-dm-row">
+      <select id="new-dm-select" class="filter-select" style="flex:1;">
+        <option value="">Start a conversation with...</option>
+        ${candidates.map((m) => `<option value="${m.user_id}">${m.profiles?.display_name || m.profiles?.email}</option>`).join("")}
+      </select>
+      <button id="new-dm-btn" class="btn-secondary">Start</button>
+    </div>
+    ${privateRoomsCache.map((r) => `<button class="dm-row" data-room="${r.roomId}">${r.name}</button>`).join("") || `<p class="hint">No conversations yet.</p>`}
+  `;
+
+  document.getElementById("new-dm-btn").addEventListener("click", async () => {
+    const otherId = document.getElementById("new-dm-select").value;
+    if (!otherId) return;
+    const { data: roomId, error } = await supabase.rpc("start_or_get_private_chat", { other_user_id: otherId });
+    if (error) { alert("Could not start chat: " + error.message); return; }
+    await openPrivateConversation(roomId);
+  });
+  listEl.querySelectorAll("[data-room]").forEach((btn) => {
+    btn.addEventListener("click", () => openPrivateConversation(btn.dataset.room));
+  });
+}
+
+async function openPrivateConversation(roomId) {
+  document.getElementById("private-room-list").classList.add("hidden");
+  document.getElementById("chat-back-row").classList.remove("hidden");
+  document.getElementById("chat-messages").classList.remove("hidden");
+  document.getElementById("chat-form").classList.remove("hidden");
+  await switchToRoom(roomId);
+}
+
+async function openPublicChat() {
+  const orgId = getIdentity()?.organisationId;
+  let { data: room } = await supabase.from("chat_rooms").select("id").eq("organisation_id", orgId).eq("room_type", "public").limit(1).maybeSingle();
+
+  if (!room) {
+    const { data: newRoom, error } = await supabase.from("chat_rooms").insert({ organisation_id: orgId, room_type: "public", name: "Office" }).select().single();
+    if (error) { document.getElementById("chat-messages").innerHTML = `<div class="empty-state">Could not open chat.</div>`; return; }
+    room = newRoom;
+  }
+  await switchToRoom(room.id);
+}
+
+async function switchToRoom(roomId) {
+  const identity = getIdentity();
+  activeChatRoomId = roomId;
+
+  await supabase.from("chat_room_members").upsert({ room_id: roomId, user_id: identity.user.id }, { onConflict: "room_id,user_id", ignoreDuplicates: true });
+
+  if (chatChannel) supabase.removeChannel(chatChannel);
+  if (reactionsChannel) supabase.removeChannel(reactionsChannel);
+
+  const { data: messages } = await supabase.from("chat_messages").select("id, content, sender_id, created_at").eq("room_id", roomId).order("created_at", { ascending: true }).limit(100);
+  visibleMessages = messages || [];
+  await renderMessages();
+
+  chatChannel = supabase
+    .channel(`room-${roomId}`)
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages", filter: `room_id=eq.${roomId}` }, (payload) => {
+      visibleMessages.push(payload.new);
+      renderMessages();
+    })
+    .subscribe();
+
+  reactionsChannel = supabase
+    .channel(`reactions-${roomId}`)
+    .on("postgres_changes", { event: "*", schema: "public", table: "message_reactions" }, (payload) => {
+      const messageId = payload.new?.message_id || payload.old?.message_id;
+      if (visibleMessages.some((m) => m.id === messageId)) refreshReactionsFor(messageId);
+    })
+    .subscribe();
+
+  const form = document.getElementById("chat-form");
+  const newForm = form.cloneNode(true); // drop old submit listeners tied to the previous room
+  form.replaceWith(newForm);
+  newForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const input = document.getElementById("chat-input");
+    const content = input.value.trim();
+    if (!content) return;
+    input.value = "";
+    const { error } = await supabase.from("chat_messages").insert({ organisation_id: identity.organisationId, room_id: roomId, sender_id: identity.user.id, content });
+    if (error) alert("Could not send message: " + error.message);
+  });
+}
+
+function senderName(senderId) {
+  if (senderId === getIdentity()?.user?.id) return "You";
+  const member = orgMembersCache.find((m) => m.user_id === senderId);
+  return member?.profiles?.display_name || member?.profiles?.email || "Someone";
+}
+
+async function renderMessages() {
+  const el = document.getElementById("chat-messages");
+  if (!visibleMessages.length) {
+    el.innerHTML = `<p class="hint">No messages yet — say hello!</p>`;
+    return;
+  }
+
+  const ids = visibleMessages.map((m) => m.id);
+  const { data: reactions } = await supabase.from("message_reactions").select("message_id, user_id, emoji").in("message_id", ids);
+  const reactionsByMessage = {};
+  (reactions || []).forEach((r) => {
+    reactionsByMessage[r.message_id] = reactionsByMessage[r.message_id] || [];
+    reactionsByMessage[r.message_id].push(r);
+  });
+
+  el.innerHTML = visibleMessages.map((m) => messageHTML(m, reactionsByMessage[m.id] || [])).join("");
+  el.querySelectorAll("[data-react]").forEach((btn) => {
+    btn.addEventListener("click", () => toggleReaction(btn.dataset.react));
+  });
+  el.scrollTop = el.scrollHeight;
+}
+
+function messageHTML(m, reactions) {
+  const time = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const selfId = getIdentity()?.user?.id;
+  const count = reactions.length;
+  const iReacted = reactions.some((r) => r.user_id === selfId);
+  return `
+    <div class="chat-message" data-message-id="${m.id}">
+      <span class="chat-sender">${senderName(m.sender_id)}</span><span class="chat-time">${time}</span>
+      <div class="chat-bubble">${m.content}</div>
+      <button class="reaction-btn ${iReacted ? "reacted" : ""}" data-react="${m.id}">👍${count ? ` ${count}` : ""}</button>
+    </div>`;
+}
+
+async function refreshReactionsFor(messageId) {
+  const { data: reactions } = await supabase.from("message_reactions").select("message_id, user_id, emoji").eq("message_id", messageId);
+  const el = document.querySelector(`[data-message-id="${messageId}"] .reaction-btn`);
+  if (!el) return;
+  const selfId = getIdentity()?.user?.id;
+  const count = (reactions || []).length;
+  const iReacted = (reactions || []).some((r) => r.user_id === selfId);
+  el.textContent = `👍${count ? ` ${count}` : ""}`;
+  el.classList.toggle("reacted", iReacted);
+}
+
+async function toggleReaction(messageId) {
+  const identity = getIdentity();
+  const { data: existing } = await supabase.from("message_reactions").select("id").eq("message_id", messageId).eq("user_id", identity.user.id).eq("emoji", "👍").maybeSingle();
+  if (existing) {
+    await supabase.from("message_reactions").delete().eq("id", existing.id);
+  } else {
+    await supabase.from("message_reactions").insert({ message_id: messageId, user_id: identity.user.id, emoji: "👍" });
+  }
+}
+
+// ===== app.js =====
+// assets/js/app.js
+
+
+const authScreen = document.getElementById("auth-screen");
+const appShell = document.getElementById("app-shell");
+const appContent = document.getElementById("app-content");
+const sidebarNav = document.getElementById("sidebar-nav");
+const topbarUser = document.getElementById("topbar-user");
+
+function showAuthScreen() {
+  appShell.classList.add("hidden");
+  authScreen.classList.remove("hidden");
+}
+
+function showAppShell() {
+  authScreen.classList.add("hidden");
+  appShell.classList.remove("hidden");
+}
+
+function renderSidebar() {
+  const items = visibleSidebarItems();
+  sidebarNav.innerHTML = items
+    .map(
+      (item) => `
+      <a href="#${item.route}" class="sidebar-link" data-route="${item.route}">
+        <span class="sidebar-label">${item.label}</span>
+      </a>`
+    )
+    .join("");
+
+  sidebarNav.querySelectorAll(".sidebar-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      sidebarNav.querySelectorAll(".sidebar-link").forEach((l) => l.classList.remove("active"));
+      link.classList.add("active");
+    });
+  });
+}
+
+function renderTopbarUser() {
+  const identity = getIdentity();
+  if (!identity) return;
+  topbarUser.innerHTML = `
+    <span class="topbar-name">${identity.profile.display_name || identity.user.email}</span>
+    <span class="topbar-role">${identity.role === "firm_admin" ? "Firm Admin" : "Staff"}</span>
+    <button id="sign-out-btn" class="btn-link">Sign Out</button>
+  `;
+  document.getElementById("sign-out-btn").addEventListener("click", async () => {
+    await signOut();
+    showAuthScreen();
+  });
+}
+
+function renderLoginForm() {
+  authScreen.innerHTML = `
+    <div class="auth-card">
+      <div class="auth-logo">AuditFlow</div>
+      <form id="login-form">
+        <label>Email
+          <input type="email" id="login-email" required autocomplete="username" />
+        </label>
+        <label>Password
+          <div class="password-row">
+            <input type="password" id="login-password" required autocomplete="current-password" />
+            <button type="button" id="toggle-password" class="btn-link">Show</button>
+          </div>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="remember-session" checked />
+          Remember session
+        </label>
+        <div id="login-error" class="form-error hidden"></div>
+        <button type="submit" class="btn-primary">Sign In</button>
+        <button type="button" id="forgot-password-link" class="btn-link">Forgot Password</button>
+      </form>
+    </div>
+  `;
+
+  const form = document.getElementById("login-form");
+  const errorBox = document.getElementById("login-error");
+  const pwInput = document.getElementById("login-password");
+
+  document.getElementById("toggle-password").addEventListener("click", (e) => {
+    pwInput.type = pwInput.type === "password" ? "text" : "password";
+    e.target.textContent = pwInput.type === "password" ? "Show" : "Hide";
+  });
+
+  document.getElementById("forgot-password-link").addEventListener("click", async () => {
+    const email = document.getElementById("login-email").value;
+    if (!email) {
+      errorBox.textContent = "Enter your email above first, then click Forgot Password.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+    try {
+      await sendPasswordReset(email);
+      errorBox.classList.add("hidden");
+      alert("If that email is registered, a password reset link has been sent.");
+    } catch (err) {
+      errorBox.textContent = "Could not send reset email. Please try again.";
+      errorBox.classList.remove("hidden");
+    }
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.classList.add("hidden");
+    const email = document.getElementById("login-email").value;
+    const password = pwInput.value;
+    try {
+      await signIn(email, password);
+      await bootAfterLogin();
+    } catch (err) {
+      errorBox.textContent = err.message || "Invalid email or password";
+      errorBox.classList.remove("hidden");
+    }
+  });
+}
+
+function renderForcedPasswordChange() {
+  appContent.innerHTML = `
+    <div class="auth-card">
+      <h2>Set a new password</h2>
+      <p>For security, you must set a new password before continuing.</p>
+      <form id="change-password-form">
+        <label>New password
+          <input type="password" id="new-password" minlength="8" required />
+        </label>
+        <label>Confirm new password
+          <input type="password" id="confirm-password" minlength="8" required />
+        </label>
+        <div id="change-password-error" class="form-error hidden"></div>
+        <button type="submit" class="btn-primary">Update Password</button>
+      </form>
+      <p class="hint">At least 8 characters, one uppercase letter, one lowercase letter, and one number.</p>
+    </div>
+  `;
+
+  document.getElementById("change-password-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pw1 = document.getElementById("new-password").value;
+    const pw2 = document.getElementById("confirm-password").value;
+    const errorBox = document.getElementById("change-password-error");
+
+    const strongEnough = /[a-z]/.test(pw1) && /[A-Z]/.test(pw1) && /[0-9]/.test(pw1) && pw1.length >= 8;
+
+    if (pw1 !== pw2) {
+      errorBox.textContent = "Passwords do not match.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+    if (!strongEnough) {
+      errorBox.textContent = "Password does not meet the requirements.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+
+    try {
+      await updatePassword(pw1);
+      navigate("/dashboard");
+      await boot();
+    } catch (err) {
+      errorBox.textContent = "Could not update password. Please try again.";
+      errorBox.classList.remove("hidden");
+    }
+  });
+}
+
+function registerRoutes() {
+  registerRoute("/dashboard", renderDashboard);
+  registerRoute("/clients", renderClients);
+  registerRoute("/work-orders", renderWorkOrders);
+  registerRoute("/resources", renderResources);
+  registerRoute("/ai-bot", renderAiBot);
+  registerRoute("/users", renderUsers);
+  registerRoute("/settings", renderSettings);
+  registerRoute("/workspace", renderWorkspace);
+
+  setNotFoundHandler((el) => {
+    el.innerHTML = `<div class="empty-state"><h2>Page not found</h2></div>`;
+  });
+
+  setGuard(async (path) => {
+    const identity = getIdentity();
+    if (!identity) {
+      showAuthScreen();
+      return false;
+    }
+    if (identity.mustChangePassword) {
+      showAppShell();
+      renderForcedPasswordChange();
+      return false;
+    }
+    if (!canAccess(path)) {
+      appContent.innerHTML = `<div class="empty-state"><h2>Unauthorised</h2><p>You don't have access to this page.</p></div>`;
+      return false;
+    }
+    return true;
+  });
+}
+
+async function bootAfterLogin() {
+  await resolveIdentity();
+  const identity = getIdentity();
+  showAppShell();
+  renderSidebar();
+  renderTopbarUser();
+
+  if (identity?.mustChangePassword) {
+    renderForcedPasswordChange();
+    return;
+  }
+  navigate("/dashboard");
+  startRouter();
+}
+
+async function boot() {
+  registerRoutes();
+
+  const session = await getSession();
+  if (!session) {
+    renderLoginForm();
+    showAuthScreen();
+    return;
+  }
+
+  try {
+    await resolveIdentity();
+  } catch (err) {
+    console.error("Failed to resolve identity", err);
+    renderLoginForm();
+    showAuthScreen();
+    return;
+  }
+
+  showAppShell();
+  renderSidebar();
+  renderTopbarUser();
+  startRouter();
+}
+
+// Clicking the app name/logo returns to dashboard.
+document.getElementById("app-logo").addEventListener("click", () => navigate("/dashboard"));
+
+boot();
+
+</script>
+</body>
+</html>
